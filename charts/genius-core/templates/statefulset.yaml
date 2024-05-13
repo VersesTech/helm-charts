@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "genius-core.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "genius-core.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "genius-core.fullname" . }}
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "genius-core.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "genius-core.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "genius-core.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ALLOWED_ORIGINS
+              value: {{ .Values.allowedOrigins | quote }}
+            - name: HSTP_PORT
+              value: {{ .Values.service.port | quote }}
+            - name: HSTP_ADDR
+              value: "0.0.0.0"
+            - name: WS_ADDR
+              value: "0.0.0.0:8080"
+            - name: MODELS_DIR
+              value: /app/models
+            - name: JWKS_URI
+              value: {{ .Values.jwksUri | quote }}
+            - name: DEFAULT_ADMIN_ID
+              value: {{ .Values.auth.initialAdminUserId | quote }}
+            - name: DEFAULT_ADMIN_PROVIDER
+              value: {{ .Values.auth.defaultProvider | quote }}
+            {{- if .Values.auth.skipValidateJwtExpiry }}
+            - name: AUTH_VALIDATE_JWT_EXPIRY
+              value: "false"
+            {{- end }}
+            - name: RUST_LOG
+              value: {{ .Values.loglevel | quote }}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.service.ports.grpc }}
+              protocol: TCP
+            - name: http-ws
+              containerPort: {{ .Values.service.ports.ws }}
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          readinessProbe:
+            tcpSocket:
+              port: grpc
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: "{{ include "genius-core.fullname" . }}-data"
+              mountPath: /app/data
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: "{{ include "genius-core.fullname" . }}-data"
+      spec:
+        accessModes:
+          {{ toYaml .Values.persistence.accessModes | nindent 10 }}
+        storageClassName: {{ .Values.persistence.storageClassName | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}

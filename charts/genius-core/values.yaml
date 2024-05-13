@@ -1,0 +1,144 @@
+allowedOrigins: "*"
+jwksUri: https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json
+serviceHostname: genius-core
+loglevel: info
+
+auth:
+  initialAdminUserId: ""
+  defaultProvider: auth0
+  skipValidateJwtExpiry: false
+
+replicaCount: 1
+
+image:
+  repository: 518625631402.dkr.ecr.us-west-1.amazonaws.com/versestech/alexandria
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# gRPC service
+service:
+  type: ClusterIP
+  ports:
+    grpc: 50052
+    ws: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  rules:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: '{{ include "genius-core.fullname" . }}'
+              port:
+                number: '{{ .Values.service.ports.grpc }}'
+    - host: chart-example-ws.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: '{{ include "genius-core.fullname" . }}'
+              port:
+                number: '{{ .Values.service.ports.ws }}'
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+httpRoute:
+  enabled: false
+  # Annotations to add to the HttpRoute
+  annotations: {}
+  hostnames: []
+    # - chart-example.local
+  parentRefs: []
+    # - name: example-gateway
+    #   namespace: example-gateway-ns
+    #   sectionName: example-gateway-section
+  rules:
+    - matches:
+        - headers:
+            - type: Exact
+              name: host
+              value: chart-example.local
+          path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: '{{ include "genius-core.fullname" . }}'
+          port: '{{ .Values.service.ports.grpc }}'
+    - matches:
+        - headers:
+            - type: Exact
+              name: host
+              value: chart-example-ws.local
+          path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: '{{ include "genius-core.fullname" . }}'
+          port: '{{ .Values.service.ports.ws }}'
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+persistence:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  size: 10Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+pdb:
+  enabled: false
