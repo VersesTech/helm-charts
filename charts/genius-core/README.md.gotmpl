@@ -1,5 +1,15 @@
 {{ template "chart.header" . }}
 
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{ template "chart.maintainersSection" . }}
+
 ## TL;DR
 ```bash
 helm install my-release oci://registry.develop.verses.io/helm-internal/genius-core
@@ -19,18 +29,6 @@ The following parameters in the values file:
 - `auth.jwksUri`: JWKS URI for your auth provider
 - `auth.defaultProvider`: Name of your auth provider
 - `auth.initialAdminUserId`: The `sub` claim from the initial admin user's auth token/id token.
-
-
-
-{{ template "chart.deprecationWarning" . }}
-
-{{ template "chart.badgesSection" . }}
-
-{{ template "chart.description" . }}
-
-{{ template "chart.homepageLine" . }}
-
-{{ template "chart.maintainersSection" . }}
 
 {{ template "chart.sourcesSection" . }}
 
