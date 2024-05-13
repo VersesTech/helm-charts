@@ -1,5 +1,24 @@
 # genius-core
 
+## TL;DR
+```bash
+helm install my-release oci://registry.develop.verses.io/helm-internal/genius-core
+```
+
+## Installation
+To install the chart with the release name `my-release` in `my-namespace`:
+```bash
+helm -n my-namespace install my-release oci://registry.develop.verses.io/helm-internal/genius-core
+```
+
+## Configuration
+
+### Authentication
+Authentication to Genius Core can be configured by setting variables to point to an existing OIDC provider.
+The following parameters in the values file:
+- `auth.defaultProvider`: Name of your auth provider
+- `auth.initialAdminUserId`: The `sub` claim from the initial admin user's auth token/id token.
+
 ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for Kubernetes
