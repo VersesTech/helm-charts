@@ -7,9 +7,7 @@ metadata:
     {{- include "genius-core.labels" . | nindent 4 }}
 spec:
   serviceName: {{ include "genius-core.fullname" . }}
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "genius-core.selectorLabels" . | nindent 6 }}
