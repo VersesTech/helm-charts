@@ -1,9 +1,9 @@
 allowedOrigins: "*"
-jwksUri: https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json
 serviceHostname: genius-core
 loglevel: info
 
 auth:
+  jwksUri: https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json
   initialAdminUserId: ""
   defaultProvider: auth0
   skipValidateJwtExpiry: false

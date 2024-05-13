@@ -47,7 +47,7 @@ spec:
             - name: MODELS_DIR
               value: /app/models
             - name: JWKS_URI
-              value: {{ .Values.jwksUri | quote }}
+              value: {{ .Values.auth.jwksUri | quote }}
             - name: DEFAULT_ADMIN_ID
               value: {{ .Values.auth.initialAdminUserId | quote }}
             - name: DEFAULT_ADMIN_PROVIDER

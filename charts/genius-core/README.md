@@ -16,6 +16,7 @@ helm -n my-namespace install my-release oci://registry.develop.verses.io/helm-in
 ### Authentication
 Authentication to Genius Core can be configured by setting variables to point to an existing OIDC provider.
 The following parameters in the values file:
+- `auth.jwksUri`: JWKS URI for your auth provider
 - `auth.defaultProvider`: Name of your auth provider
 - `auth.initialAdminUserId`: The `sub` claim from the initial admin user's auth token/id token.
 
@@ -31,6 +32,7 @@ A Helm chart for Kubernetes
 | allowedOrigins | string | `"*"` |  |
 | auth.defaultProvider | string | `"auth0"` |  |
 | auth.initialAdminUserId | string | `""` |  |
+| auth.jwksUri | string | `"https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json"` |  |
 | auth.skipValidateJwtExpiry | bool | `false` |  |
 | fullnameOverride | string | `""` |  |
 | httpRoute.annotations | object | `{}` |  |
@@ -69,7 +71,6 @@ A Helm chart for Kubernetes
 | ingress.rules[1].paths[0].path | string | `"/"` |  |
 | ingress.rules[1].paths[0].pathType | string | `"ImplementationSpecific"` |  |
 | ingress.tls | list | `[]` |  |
-| jwksUri | string | `"https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json"` |  |
 | loglevel | string | `"info"` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
