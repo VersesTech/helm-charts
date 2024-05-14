@@ -39,7 +39,7 @@ spec:
             - name: ALLOWED_ORIGINS
               value: {{ .Values.allowedOrigins | quote }}
             - name: HSTP_PORT
-              value: {{ .Values.service.port | quote }}
+              value: {{ .Values.service.ports.grpc | quote }}
             - name: HSTP_ADDR
               value: "0.0.0.0"
             - name: WS_ADDR
