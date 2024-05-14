@@ -11,6 +11,8 @@ spec:
   selector:
     matchLabels:
       {{- include "genius-core.selectorLabels" . | nindent 6 }}
+  updateStrategy:
+    type: OnDelete
   template:
     metadata:
       {{- with .Values.podAnnotations }}
