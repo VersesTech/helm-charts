@@ -32,17 +32,16 @@ serviceAccount:
 podAnnotations: {}
 
 podSecurityContext:
-  {}
-  # fsGroup: 2000
+  # This is the `verses` user as defined in `Dockerfile``
+  fsGroup: 1001
 
 securityContext:
-  {}
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+  runAsNonRoot: true
+  runAsUser: 1001
 
 # gRPC service
 service:
