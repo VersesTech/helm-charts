@@ -34,6 +34,7 @@ The following parameters in the values file:
 | auth.initialAdminUserId | string | `""` |  |
 | auth.jwksUri | string | `"https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json"` |  |
 | auth.skipValidateJwtExpiry | bool | `false` |  |
+| extraObjects | list | `[]` | Extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | fullnameOverride | string | `""` |  |
 | httpRoute.annotations | object | `{}` |  |
 | httpRoute.enabled | bool | `false` |  |
@@ -77,6 +78,8 @@ The following parameters in the values file:
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
 | pdb.enabled | bool | `false` |  |
+| pdb.maxUnavailable | string | `""` |  |
+| pdb.minAvailable | string | `""` |  |
 | persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
 | persistence.size | string | `"10Gi"` |  |
 | persistence.storageClassName | string | `""` |  |

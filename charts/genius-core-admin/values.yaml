@@ -1,17 +1,37 @@
-allowedOrigins: "*"
-serviceHostname: genius-core
-loglevel: info
+# -- Externally reachable domai
+externalDomain: chart-example.local
 
-auth:
-  jwksUri: https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json
-  initialAdminUserId: ""
-  defaultProvider: auth0
-  skipValidateJwtExpiry: false
+sentry:
+  # Name of AWS secret containing `authToken` key
+  authTokenSecretsManagerSecretName: genius-core-admin-sentry-auth-token
+
+# -- Secret configuration
+configSecret: |
+  NEXT_PUBLIC_APP_GENIUS_DB_URL='http://genius-core:50052'
+  UNLEASH_SERVER_API_URL=''
+  UNLEASH_SERVER_API_TOKEN=''
+  NEXT_PUBLIC_UNLEASH_SERVER_API_URL=''
+  NEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN=''
+  SENTRY_AUTH_TOKEN=''
+  AUTH_URL={{ printf "https://%s" .Values.externalDomain | squote }}
+  AUTH_SECRET={{ randAlphaNum 32 | squote }}
+  CLIENT_ID=''
+  CLIENT_SECRET=''
+  ISSUER_BASE_URL=''
+  AUDIENCE=''
+  AUTH_SCOPE='openid profile email'
+
+# -- Name of existing secret containing env configuration
+configExistingSecret: ""
+
+# Default values for genius-core-admin.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: 518625631402.dkr.ecr.us-west-1.amazonaws.com/versestech/alexandria
+  repository: 518625631402.dkr.ecr.us-west-1.amazonaws.com/versestech/genius-core-admin
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -32,7 +52,6 @@ serviceAccount:
 podAnnotations: {}
 
 podSecurityContext:
-  # This is the `verses` user as defined in `Dockerfile``
   fsGroup: 1001
 
 securityContext:
@@ -42,13 +61,11 @@ securityContext:
   # readOnlyRootFilesystem: true
   runAsNonRoot: true
   runAsUser: 1001
+  runAsGroup: 1001
 
-# gRPC service
 service:
   type: ClusterIP
-  ports:
-    grpc: 50052
-    ws: 8080
+  port: 3000
 
 ingress:
   enabled: false
@@ -63,18 +80,9 @@ ingress:
           path: /
           backend:
             service:
-              name: '{{ include "genius-core.fullname" . }}'
+              name: '{{ include "genius-core-admin.fullname" . }}'
               port:
-                number: '{{ .Values.service.ports.grpc }}'
-    - host: chart-example-ws.local
-      paths:
-        - pathType: Prefix
-          path: /
-          backend:
-            service:
-              name: '{{ include "genius-core.fullname" . }}'
-              port:
-                number: '{{ .Values.service.ports.ws }}'
+                number: '{{ .Values.service.port }}'
   tls: []
     # - secretName: chart-example-tls
     #   hosts:
@@ -101,25 +109,8 @@ httpRoute:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: '{{ include "genius-core.fullname" . }}'
-          port: '{{ .Values.service.ports.grpc }}'
-      filters: []
-        # - type: RequestHeaderModifier
-        #   requestHeaderModifier:
-        #     add:
-        #       - name: my-header
-        #         value: foo
-    - matches:
-        - headers:
-            - type: Exact
-              name: host
-              value: chart-example-ws.local
-          path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: '{{ include "genius-core.fullname" . }}'
-          port: '{{ .Values.service.ports.ws }}'
+        - name: '{{ include "genius-core-admin.fullname" . }}'
+          port: '{{ .Values.service.port }}'
       filters: []
         # - type: RequestHeaderModifier
         #   requestHeaderModifier:
@@ -127,8 +118,7 @@ httpRoute:
         #       - name: my-header
         #         value: foo
 
-resources:
-  {}
+resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -140,11 +130,12 @@ resources:
   #   cpu: 100m
   #   memory: 128Mi
 
-persistence:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: ""
-  size: 10Gi
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
