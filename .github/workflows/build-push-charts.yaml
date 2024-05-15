@@ -17,8 +17,11 @@ jobs:
       matrix:
         chart:
           - genius-core
+          - genius-core-admin
         include:
           - chart: genius-core
+            version: 0.1.0
+          - chart: genius-core-admin
             version: 0.1.0
     steps:
       - name: Checkout sources
