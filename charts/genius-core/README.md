@@ -60,16 +60,16 @@ The following parameters in the values file:
 | ingress.annotations | object | `{}` |  |
 | ingress.className | string | `""` |  |
 | ingress.enabled | bool | `false` |  |
-| ingress.rules[0].host | string | `"chart-example.local"` |  |
-| ingress.rules[0].paths[0].backend.service.name | string | `"{{ include \"genius-core.fullname\" . }}"` |  |
-| ingress.rules[0].paths[0].backend.service.port.number | string | `"{{ .Values.service.ports.grpc }}"` |  |
-| ingress.rules[0].paths[0].path | string | `"/"` |  |
-| ingress.rules[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
-| ingress.rules[1].host | string | `"chart-example-ws.local"` |  |
-| ingress.rules[1].paths[0].backend.service.name | string | `"{{ include \"genius-core.fullname\" . }}"` |  |
-| ingress.rules[1].paths[0].backend.service.port.number | string | `"{{ .Values.service.ports.ws }}"` |  |
-| ingress.rules[1].paths[0].path | string | `"/"` |  |
-| ingress.rules[1].paths[0].pathType | string | `"ImplementationSpecific"` |  |
+| ingress.hosts[0].host | string | `"chart-example.local"` |  |
+| ingress.hosts[0].paths[0].backend.service.name | string | `"{{ include \"genius-core.fullname\" . }}"` |  |
+| ingress.hosts[0].paths[0].backend.service.port.number | string | `"{{ .Values.service.ports.grpc }}"` |  |
+| ingress.hosts[0].paths[0].path | string | `"/"` |  |
+| ingress.hosts[0].paths[0].pathType | string | `"Prefix"` |  |
+| ingress.hosts[1].host | string | `"chart-example-ws.local"` |  |
+| ingress.hosts[1].paths[0].backend.service.name | string | `"{{ include \"genius-core.fullname\" . }}"` |  |
+| ingress.hosts[1].paths[0].backend.service.port.number | string | `"{{ .Values.service.ports.ws }}"` |  |
+| ingress.hosts[1].paths[0].path | string | `"/"` |  |
+| ingress.hosts[1].paths[0].pathType | string | `"Prefix"` |  |
 | ingress.tls | list | `[]` |  |
 | loglevel | string | `"info"` |  |
 | nameOverride | string | `""` |  |
@@ -79,10 +79,11 @@ The following parameters in the values file:
 | persistence.size | string | `"10Gi"` |  |
 | persistence.storageClassName | string | `""` |  |
 | podAnnotations | object | `{}` |  |
-| podSecurityContext | object | `{}` |  |
+| podSecurityContext.fsGroup | int | `1001` |  |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` |  |
-| securityContext | object | `{}` |  |
+| securityContext.runAsNonRoot | bool | `true` |  |
+| securityContext.runAsUser | int | `1001` |  |
 | service.ports.grpc | int | `50052` |  |
 | service.ports.ws | int | `8080` |  |
 | service.type | string | `"ClusterIP"` |  |
