@@ -41,6 +41,7 @@ The following parameters in the values file:
 | httpRoute.parentRefs | list | `[]` |  |
 | httpRoute.rules[0].backendRefs[0].name | string | `"{{ include \"genius-core.fullname\" . }}"` |  |
 | httpRoute.rules[0].backendRefs[0].port | string | `"{{ .Values.service.ports.grpc }}"` |  |
+| httpRoute.rules[0].filters | list | `[]` |  |
 | httpRoute.rules[0].matches[0].headers[0].name | string | `"host"` |  |
 | httpRoute.rules[0].matches[0].headers[0].type | string | `"Exact"` |  |
 | httpRoute.rules[0].matches[0].headers[0].value | string | `"chart-example.local"` |  |
@@ -48,6 +49,7 @@ The following parameters in the values file:
 | httpRoute.rules[0].matches[0].path.value | string | `"/"` |  |
 | httpRoute.rules[1].backendRefs[0].name | string | `"{{ include \"genius-core.fullname\" . }}"` |  |
 | httpRoute.rules[1].backendRefs[0].port | string | `"{{ .Values.service.ports.ws }}"` |  |
+| httpRoute.rules[1].filters | list | `[]` |  |
 | httpRoute.rules[1].matches[0].headers[0].name | string | `"host"` |  |
 | httpRoute.rules[1].matches[0].headers[0].type | string | `"Exact"` |  |
 | httpRoute.rules[1].matches[0].headers[0].value | string | `"chart-example-ws.local"` |  |

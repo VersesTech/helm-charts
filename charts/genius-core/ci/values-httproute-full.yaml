@@ -1,0 +1,47 @@
+httpRoute:
+  enabled: true
+  # Annotations to add to the HttpRoute
+  annotations: {}
+  hostnames:
+    - chart-example.local
+    - chart-example-ws.local
+  parentRefs:
+    - name: example-gateway
+      namespace: example-gateway-ns
+      sectionName: example-gateway-section
+      port: 443
+  rules:
+    - matches:
+        - headers:
+            - type: Exact
+              name: host
+              value: chart-example.local
+          path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: '{{ include "genius-core.fullname" . }}'
+          port: '{{ .Values.service.ports.grpc }}'
+      filters: []
+        # - type: RequestHeaderModifier
+        #   requestHeaderModifier:
+        #     add:
+        #       - name: my-header
+        #         value: foo
+    - matches:
+        - headers:
+            - type: Exact
+              name: host
+              value: chart-example-ws.local
+          path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: '{{ include "genius-core.fullname" . }}'
+          port: '{{ .Values.service.ports.ws }}'
+      filters: []
+        # - type: RequestHeaderModifier
+        #   requestHeaderModifier:
+        #     add:
+        #       - name: my-header
+        #         value: foo

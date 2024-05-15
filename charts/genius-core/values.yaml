@@ -76,9 +76,9 @@ ingress:
               port:
                 number: '{{ .Values.service.ports.ws }}'
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+    # - secretName: chart-example-tls
+    #   hosts:
+    #     - chart-example.local
 
 httpRoute:
   enabled: false
@@ -86,6 +86,7 @@ httpRoute:
   annotations: {}
   hostnames: []
     # - chart-example.local
+    # - chart-example-ws.local
   parentRefs: []
     # - name: example-gateway
     #   namespace: example-gateway-ns
@@ -102,6 +103,12 @@ httpRoute:
       backendRefs:
         - name: '{{ include "genius-core.fullname" . }}'
           port: '{{ .Values.service.ports.grpc }}'
+      filters: []
+        # - type: RequestHeaderModifier
+        #   requestHeaderModifier:
+        #     add:
+        #       - name: my-header
+        #         value: foo
     - matches:
         - headers:
             - type: Exact
@@ -113,6 +120,12 @@ httpRoute:
       backendRefs:
         - name: '{{ include "genius-core.fullname" . }}'
           port: '{{ .Values.service.ports.ws }}'
+      filters: []
+        # - type: RequestHeaderModifier
+        #   requestHeaderModifier:
+        #     add:
+        #       - name: my-header
+        #         value: foo
 
 resources:
   {}

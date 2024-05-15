@@ -36,7 +36,11 @@ spec:
               service:
                 name: {{ tpl .backend.service.name $ | quote }}
                 port:
+                  {{- if kindIs "string" .backend.service.port.number }}
                   number: {{ tpl .backend.service.port.number $ | atoi }}
+                  {{- else }}
+                  number: {{ .backend.service.port.number | int }}
+                  {{- end }}
           {{- end }}
     {{- end }}
 {{- end }}

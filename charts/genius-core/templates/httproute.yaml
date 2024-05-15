@@ -12,9 +12,65 @@ metadata:
   {{- end }}
 spec:
   parentRefs:
-    {{ toYaml .Values.httpRoute.parentRefs | nindent 4 }}
+    {{- range .Values.httpRoute.parentRefs }}
+    - name: {{ .name | quote }}
+      {{- with .group }}
+      group: {{ . | quote }}
+      {{- end }}
+      {{- with .kind }}
+      kind: {{ . | quote }}
+      {{- end }}
+      {{- with .namespace }}
+      namespace: {{ tpl . $ | quote }}
+      {{- end }}
+      {{- with .sectionName }}
+      sectionName: {{ tpl . $ | quote }}
+      {{- end }}
+      {{- with .port }}
+      {{- if kindIs "string" . }}
+      port: {{ tpl . $ | atoi }}
+      {{- else }}
+      port: {{ . | int }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
   hostnames:
-    {{ tpl (toYaml .Values.httpRoute.hostnames) . | nindent 4 }}
+    {{- range .Values.httpRoute.hostnames }}
+    - {{ tpl . $ | quote }}
+    {{- end }}
   rules:
-    {{ tpl (toYaml .Values.httpRoute.rules) . | nindent 4 }}
+    {{- range .Values.httpRoute.rules }}
+    - {{- with .matches }}
+      matches:
+        {{- range . }}
+        - {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- with .backendRef }}
+      backendRefs:
+        - name: {{ .name | quote }}
+          {{- with .group }}
+          group: {{ . | quote }}
+          {{- end }}
+          {{- with .kind }}
+          kind: {{ . | quote }}
+          {{- end }}
+          {{- with .namespace }}
+          namespace: {{ tpl . $ | quote }}
+          {{- end }}
+          {{- with .port }}
+          {{- if kindIs "string" . }}
+          port: {{ tpl . $ | atoi }}
+          {{- else }}
+          port: {{ . | int }}
+          {{- end }}
+          {{- end }}
+      {{- end }}
+      {{- with .filters }}
+      filters:
+        {{- range . }}
+        - {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
 {{- end }}
