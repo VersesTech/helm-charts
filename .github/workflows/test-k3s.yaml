@@ -54,5 +54,4 @@ jobs:
 
       - name: Run kubectl
         run: |-
-          cat "${HOME}/.kube/config"
           kubectl version
