@@ -6,13 +6,30 @@ on:
       - main
 
 jobs:
+  list-values-files:
+    name: Create matrix from values files
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      
+      - name: Generate matrix
+        id: set-matrix
+        run: |-
+          echo "matrix="$(ls charts/**/ci/values-*.yaml | jq -R -s -c 'split("\n")[:-1]')"" >> "${GITHUB_OUTPUT}"
+  
   create-k3s-cluster:
     name: Start k3s cluster
+    needs:
+      - list-values-files
     runs-on: ubuntu-latest
     strategy:
       matrix:
         k3s-version:
           - "1.30"
+        values-file: ${{ fromJson(needs.list-values-files.outputs.matrix )}}
         include:
           - k3s-version: "1.30"
             image-tag: v1.30.0-k3s1
@@ -37,6 +54,7 @@ jobs:
       - name: Wait for k3s server
         run: |-
           mkdir -p "${HOME}/.kube/"
+
           retries=5
           while ((retries > 0))
           do
