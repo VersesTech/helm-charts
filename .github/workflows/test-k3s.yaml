@@ -15,7 +15,7 @@ jobs:
           - "1.30"
         include:
           - k3s-version: "1.30"
-            image-tag: v1.30.0-k3s1          
+            image-tag: v1.30.0-k3s1
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -46,7 +46,10 @@ jobs:
       - name: Copy kubeconfig from k3s server to workspace
         run: |-
           mkdir -p "${HOME}/.kube/"
-          docker cp k3s-server:/etc/rancher/k3s/k3s.yaml "${HOME}/.kube/config"
+          until docker cp k3s-server:/etc/rancher/k3s/k3s.yaml "${HOME}/.kube/config"
+          do
+            echo "Waiting for kubeconfig to be generated..."
+          done
 
       - name: Run kubectl
         run: |-
