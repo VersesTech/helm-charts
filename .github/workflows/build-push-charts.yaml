@@ -27,10 +27,6 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
       
-      - name: Install helm
-        shell: bash
-        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-      
       - name: Lint
         run: helm lint charts/${{ matrix.chart }} --strict --debug
 
