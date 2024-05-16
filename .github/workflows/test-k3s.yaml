@@ -33,25 +33,24 @@ jobs:
             -d
           run: |-
             /bin/k3s server
-      
-      - name: Download wait-for-it
-        run: |-
-          curl -fSsLO https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
-          chmod +x ./wait-for-it.sh
-      
+
       - name: Wait for k3s server
         run: |-
-          ./wait-for-it.sh localhost:6443 --strict --timeout=120 -- echo "k3s server is up"
-
-      - name: Copy kubeconfig from k3s server to workspace
-        run: |-
           mkdir -p "${HOME}/.kube/"
-          until docker cp k3s-server:/etc/rancher/k3s/k3s.yaml "${HOME}/.kube/config"
+          retries=5
+          while ((retries > 0))
           do
-            echo "Waiting for kubeconfig to be generated..."
-            sleep 5
+            docker cp k3s-server:/etc/rancher/k3s/k3s.yaml "${HOME}/.kube/config" && \
+            kubectl version && \
+            break
+
+            echo "Waiting for k3s..."
+            sleep 10
+            ((retries --))
           done
 
-      - name: Run kubectl
-        run: |-
-          kubectl version
+          if ((retries == 0))
+          then
+            echo "Failed to wait for k3s server"
+            exit 1
+          fi
