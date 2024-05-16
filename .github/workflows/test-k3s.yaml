@@ -1,0 +1,44 @@
+name: Test Charts in K3S
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-k3s-cluster:
+    name: Start k3s cluster
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        k3s-version:
+          - 1.30
+        include:
+          - k3s-version: 1.30
+            image-tag: v1.30.0-k3s1          
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Start k3s server
+        uses: addnab/docker-run-action@v3
+        with:
+          image: rancher/k3s:${{ matrix.image-tag }}
+          options: >-
+            --name k3s-server
+            --hostname k3s-server
+            --privileged
+            -p 6443:6443
+            -v ${{ github.workspace }}/.github/workflows/k3s/config.yaml:/etc/rancher/k3s/config.yaml.d/00-github-actions-ci.yaml
+            -d
+          run: |-
+            /bin/k3s server
+
+      - name: Copy kubeconfig from k3s server to workspace
+        run: |-
+          mkdir -p "${HOME}/.kube/"
+          docker cp k3s-server:/etc/rancher/k3s/k3s.yaml "${HOME}/.kube/config"
+
+      - name: Run kubectl
+        run: |-
+          kubectl version
