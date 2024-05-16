@@ -12,9 +12,9 @@ jobs:
     strategy:
       matrix:
         k3s-version:
-          - 1.30
+          - "1.30"
         include:
-          - k3s-version: 1.30
+          - k3s-version: "1.30"
             image-tag: v1.30.0-k3s1          
     steps:
       - name: Checkout sources
@@ -33,6 +33,15 @@ jobs:
             -d
           run: |-
             /bin/k3s server
+      
+      - name: Download wait-for-it
+        run: |-
+          curl -fSsLO https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+          chmod +x ./wait-for-it.sh
+      
+      - name: Wait for k3s server
+        run: |-
+          ./wait-for-it.sh localhost:6443 --strict --timeout=120 -- echo "k3s server is up"
 
       - name: Copy kubeconfig from k3s server to workspace
         run: |-
