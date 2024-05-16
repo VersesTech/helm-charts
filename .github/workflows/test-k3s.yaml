@@ -49,8 +49,10 @@ jobs:
           until docker cp k3s-server:/etc/rancher/k3s/k3s.yaml "${HOME}/.kube/config"
           do
             echo "Waiting for kubeconfig to be generated..."
+            sleep 5
           done
 
       - name: Run kubectl
         run: |-
+          cat "${HOME}/.kube/config"
           kubectl version
