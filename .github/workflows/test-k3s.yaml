@@ -27,9 +27,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        values-file: ${{ fromJson(needs.list-values-files.outputs.matrix )}}
         k3s-version:
           - "1.30"
-        values-file: ${{ fromJson(needs.list-values-files.outputs.matrix )}}
         include:
           - k3s-version: "1.30"
             image-tag: v1.30.0-k3s1
@@ -72,3 +72,10 @@ jobs:
             echo "Failed to wait for k3s server"
             exit 1
           fi
+      
+      - name: Test helm chart
+        run: |-
+          CHART="$(echo '${{ matrix.values-file }}' | cut -d '/' -f 1-2)"
+          RELEASE_NAME="$(echo "${CHART}" | cut -d '/' -f 2)"
+          echo "${CHART}"
+          helm -n test-ns template "${RELEASE_NAME}" "${CHART}" -f '${{ matrix.values-file }}'
