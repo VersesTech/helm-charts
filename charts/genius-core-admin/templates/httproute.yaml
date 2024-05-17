@@ -46,7 +46,7 @@ spec:
         - {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
       {{- end }}
-      {{- with .backendRef }}
+      {{- with .backendRefs }}
       backendRefs:
         - name: {{ .name | quote }}
           {{- with .group }}
