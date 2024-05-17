@@ -48,6 +48,7 @@ spec:
       {{- end }}
       {{- with .backendRefs }}
       backendRefs:
+        {{- range . }}
         - name: {{ .name | quote }}
           {{- with .group }}
           group: {{ . | quote }}
@@ -65,6 +66,7 @@ spec:
           port: {{ . | int }}
           {{- end }}
           {{- end }}
+        {{- end }}
       {{- end }}
       {{- with .filters }}
       filters:
