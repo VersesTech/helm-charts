@@ -51,13 +51,22 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: env-config
+              {{- if .Values.configExistingSecret.name }}
+              mountPath: "/app/{{ .Values.configExistingSecret.key }}"
+              subPath: {{ .Values.configExistingSecret.key | quote }}
+              {{- else if .Values.config }}
               mountPath: /app/.env.production
               subPath: .env.production
+              {{- end }}
               readOnly: true
       volumes:
         - name: env-config
           secret:
-            secretName: "{{ include "genius-core-admin.fullname" . }}-env-config"
+            {{- if .Values.configExistingSecret.name }}
+            secretName: {{ .Values.configExistingSecret.name | quote }}
+            {{- else if .Values.config }}
+            secretName: "{{ include "genius-core-admin.fullname" . }}-env-config"            
+            {{- end }}
             defaultMode: 0400
       {{- with .Values.nodeSelector }}
       nodeSelector:

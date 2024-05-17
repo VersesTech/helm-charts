@@ -6,7 +6,7 @@ sentry:
   authTokenSecretsManagerSecretName: genius-core-admin-sentry-auth-token
 
 # -- Secret configuration
-configSecret: |
+config: |
   NEXT_PUBLIC_APP_GENIUS_DB_URL='http://genius-core:50052'
   UNLEASH_SERVER_API_URL=''
   UNLEASH_SERVER_API_TOKEN=''
@@ -21,8 +21,12 @@ configSecret: |
   AUDIENCE=''
   AUTH_SCOPE='openid profile email'
 
-# -- Name of existing secret containing env configuration
-configExistingSecret: ""
+# -- Reference an existing secret containing the env configuration
+configExistingSecret:
+  # -- Name of the secret
+  name: ""
+  # -- Key inside the secret
+  key: .env.production
 
 # Default values for genius-core-admin.
 # This is a YAML-formatted file.

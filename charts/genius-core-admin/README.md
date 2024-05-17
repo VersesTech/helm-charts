@@ -28,8 +28,10 @@ helm -n my-namespace install my-release oci://registry.develop.verses.io/helm-in
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
-| configExistingSecret | string | `""` | Name of existing secret containing env configuration |
-| configSecret | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL='http://genius-core:50052'\nUNLEASH_SERVER_API_URL=''\nUNLEASH_SERVER_API_TOKEN=''\nNEXT_PUBLIC_UNLEASH_SERVER_API_URL=''\nNEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN=''\nSENTRY_AUTH_TOKEN=''\nAUTH_URL={{ printf \"https://%s\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID=''\nCLIENT_SECRET=''\nISSUER_BASE_URL=''\nAUDIENCE=''\nAUTH_SCOPE='openid profile email'\n"` | Secret configuration |
+| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL='http://genius-core:50052'\nUNLEASH_SERVER_API_URL=''\nUNLEASH_SERVER_API_TOKEN=''\nNEXT_PUBLIC_UNLEASH_SERVER_API_URL=''\nNEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN=''\nSENTRY_AUTH_TOKEN=''\nAUTH_URL={{ printf \"https://%s\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID=''\nCLIENT_SECRET=''\nISSUER_BASE_URL=''\nAUDIENCE=''\nAUTH_SCOPE='openid profile email'\n"` | Secret configuration |
+| configExistingSecret | object | `{"key":".env.production","name":""}` | Reference an existing secret containing the env configuration |
+| configExistingSecret.key | string | `".env.production"` | Key inside the secret |
+| configExistingSecret.name | string | `""` | Name of the secret |
 | externalDomain | string | `"chart-example.local"` | Externally reachable domai |
 | extraObjects | list | `[]` | Extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | fullnameOverride | string | `""` |  |
