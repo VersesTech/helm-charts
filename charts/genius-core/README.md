@@ -1,6 +1,6 @@
 # genius-core
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.30.0](https://img.shields.io/badge/AppVersion-2.30.0-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.32.0](https://img.shields.io/badge/AppVersion-2.32.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -63,6 +63,7 @@ The following parameters in the values file:
 | ingress.annotations | object | `{}` |  |
 | ingress.className | string | `""` |  |
 | ingress.enabled | bool | `false` |  |
+| ingress.grpc | object | `{"annotations":{},"className":"","enabled":false,"hosts":[{"host":"chart-example.local","paths":[{"backend":{"service":{"name":"{{ include \"genius-core.fullname\" . }}","port":{"number":"{{ .Values.service.ports.grpc }}"}}},"path":"/","pathType":"Prefix"}]}],"tls":[]}` | Ingress configuration for gRPC ingress when `.Values.ingress.separateIngresses` is set to `true` |
 | ingress.hosts[0].host | string | `"chart-example.local"` |  |
 | ingress.hosts[0].paths[0].backend.service.name | string | `"{{ include \"genius-core.fullname\" . }}"` |  |
 | ingress.hosts[0].paths[0].backend.service.port.number | string | `"{{ .Values.service.ports.grpc }}"` |  |
@@ -73,7 +74,20 @@ The following parameters in the values file:
 | ingress.hosts[1].paths[0].backend.service.port.number | string | `"{{ .Values.service.ports.ws }}"` |  |
 | ingress.hosts[1].paths[0].path | string | `"/"` |  |
 | ingress.hosts[1].paths[0].pathType | string | `"Prefix"` |  |
+| ingress.separateIngresses | bool | `false` | Enable to create separate ingress resources for gRPC and websocket, since some ingress controllers do not support multiple backend protocols using a single ingress |
 | ingress.tls | list | `[]` |  |
+| ingress.ws | object | `{"annotations":{},"className":"","enabled":false,"hosts":[{"host":"chart-example-ws.local","paths":[{"backend":{"service":{"name":"{{ include \"genius-core.fullname\" . }}","port":{"number":"{{ .Values.service.ports.ws }}"}}},"path":"/","pathType":"Prefix"}]}],"tls":[]}` | Ingress configuration for websocket ingress when `.Values.ingress.separateIngresses` is set to `true` |
+| license.certs | object | `{"ca":"","cert":"","existingSecret":{"caKey":"","certKey":"","keyKey":"","name":""},"key":""}` | Cerrtificates from onboarding portal |
+| license.certs.ca | string | `""` | CA certificate from onboarding portal |
+| license.certs.cert | string | `""` | Certificate from onboarding portal |
+| license.certs.existingSecret | object | `{"caKey":"","certKey":"","keyKey":"","name":""}` | Reference to an existing k8s secret |
+| license.certs.existingSecret.caKey | string | `""` | Key in secret that contains the secret content |
+| license.certs.existingSecret.certKey | string | `""` | Key in secret that contains the secret content |
+| license.certs.existingSecret.keyKey | string | `""` | Key in secret that contains the secret content |
+| license.certs.existingSecret.name | string | `""` | Name of the existing secret |
+| license.certs.key | string | `""` | Private key from onboarding portal |
+| license.key | string | `""` | License key from onboarding portal |
+| license.keyExistingSecret | object | `{}` | Reference to an existing k8s secret |
 | loglevel | string | `"info"` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |

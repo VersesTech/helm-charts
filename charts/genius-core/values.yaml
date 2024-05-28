@@ -8,6 +8,47 @@ auth:
   defaultProvider: auth0
   skipValidateJwtExpiry: false
 
+license:
+  # -- License key from onboarding portal
+  key: ""
+  # -- Reference to an existing k8s secret
+  keyExistingSecret: {}
+    # -- Name of the existing secret
+    # name: ""
+    # -- Key inside secret that contains the secret content
+    # key: ""
+
+  # -- Cerrtificates from onboarding portal
+  certs:
+    # -- Certificate from onboarding portal
+    cert: ""
+    # cert: |-
+    #   -----BEGIN CERTIFICATE-----
+    #   ...
+    #   -----END CERTIFICATE-----
+    # -- Private key from onboarding portal
+    key: ""
+    # key: |-
+    #   -----BEGIN PRIVATE KEY-----
+    #   -----END PRIVATE KEY-----
+    # -- CA certificate from onboarding portal
+    ca: ""
+    # ca: |-
+    #   -----BEGIN CERTIFICATE-----
+    #   ...
+    #   -----END CERTIFICATE-----
+
+    # -- Reference to an existing k8s secret
+    existingSecret:
+      # -- Name of the existing secret
+      name: ""
+      # -- Key in secret that contains the secret content
+      certKey: ""
+      # -- Key in secret that contains the secret content
+      keyKey: ""
+      # -- Key in secret that contains the secret content
+      caKey: ""
+
 replicaCount: 1
 
 image:
@@ -51,6 +92,7 @@ service:
     ws: 8080
 
 ingress:
+  # Values for a single ingress resource
   enabled: false
   className: ""
   annotations: {}
@@ -79,6 +121,55 @@ ingress:
     # - secretName: chart-example-tls
     #   hosts:
     #     - chart-example.local
+    #     - chart-example-ws.local
+
+  # -- Enable to create separate ingress resources for gRPC and websocket, since some
+  # ingress controllers do not support multiple backend protocols using a single ingress
+  separateIngresses: false
+
+  # Ingress configuration for gRPC ingress when `.Values.ingress.separateIngresses` is set to `true`
+  grpc:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: '{{ include "genius-core.fullname" . }}'
+                port:
+                  number: '{{ .Values.service.ports.grpc }}'
+    tls: []
+      # - secretName: chart-example-tls
+      #   hosts:
+      #     - chart-example.local
+
+  # Ingress configuration for websocket ingress when `.Values.ingress.separateIngresses` is set to `true`
+  ws:
+    enabled: false
+    className: ""
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example-ws.local
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: '{{ include "genius-core.fullname" . }}'
+                port:
+                  number: '{{ .Values.service.ports.ws }}'
+    tls: []
+      # - secretName: chart-example-tls
+      #   hosts:
+      #     - chart-example-ws.local
 
 httpRoute:
   enabled: false

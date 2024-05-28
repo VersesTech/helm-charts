@@ -1,22 +1,22 @@
-{{- if and (not .Values.ingress.separateIngresses) .Values.ingress.enabled -}}
+{{- if and .Values.ingress.separateIngresses .Values.ingress.ws.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: "{{ include "genius-core.fullname" . }}"
+  name: "{{ include "genius-core.fullname" . }}-ws"
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "genius-core.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- with .Values.ingress.ws.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- with .Values.ingress.className }}
+  {{- with .Values.ingress.ws.className }}
   ingressClassName: {{ . }}
   {{- end -}}
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.ingress.ws.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range .Values.ingress.ws.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ tpl . $ | quote }}
@@ -25,7 +25,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
+    {{- range .Values.ingress.ws.hosts }}
     - host: {{ tpl .host $ | quote }}
       http:
         paths:
