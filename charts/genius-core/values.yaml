@@ -147,7 +147,7 @@ ingress:
                 port:
                   number: '{{ .Values.service.ports.grpc }}'
     tls: []
-      # - secretName: chart-example-tls
+      # - secretName: chart-example-grpc-tls
       #   hosts:
       #     - chart-example.local
 
@@ -169,7 +169,7 @@ ingress:
                 port:
                   number: '{{ .Values.service.ports.ws }}'
     tls: []
-      # - secretName: chart-example-tls
+      # - secretName: chart-example-ws-tls
       #   hosts:
       #     - chart-example-ws.local
 
