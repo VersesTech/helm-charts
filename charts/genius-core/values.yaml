@@ -9,17 +9,19 @@ auth:
   skipValidateJwtExpiry: false
 
 license:
+  serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
+  productCode: genius-core
   # -- License key from onboarding portal
   key: ""
   # -- Reference to an existing k8s secret
-  keyExistingSecret: {}
+  keyExistingSecret:
     # -- Name of the existing secret
-    # name: ""
+    name: ""
     # -- Key inside secret that contains the secret content
-    # key: ""
+    key: licenseKey
 
   # -- Cerrtificates from onboarding portal
-  certs:
+  tls:
     # -- Certificate from onboarding portal
     cert: ""
     # cert: |-

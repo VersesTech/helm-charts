@@ -56,6 +56,34 @@ spec:
             - name: AUTH_VALIDATE_JWT_EXPIRY
               value: "false"
             {{- end }}
+            - name: LICENSE_SERVER_URI
+              value: {{ .Values.license.serverUrl | quote }}
+            - name: LICENSE_PRODUCT_CODE
+              value: {{ .Values.license.productCode | quote }}
+            - name: LICENSE_KEY
+              {{- if .Values.license.keyExistingSecret.name }}
+              value: "/etc/genius/license/{{ .Values.license.keyExistingSecret.key }}"
+              {{- else }}
+              value: /etc/genius/license/licenseKey
+              {{- end }}
+            - name: LICENSE_SERVER_CERTIFICATE
+              {{- if .Values.license.tls.existingSecret.name }}
+              value: "/etc/genius/tls/{{ .Values.license.tls.existingSecret.certKey }}"
+              {{- else }}
+              value: /etc/genius/tls/tls.crt
+              {{- end }}
+            - name: LICENSE_SERVER_PRIVATE_KEY
+              {{- if .Values.license.tls.existingSecret.name }}
+              value: "/etc/genius/tls/{{ .Values.license.tls.existingSecret.keyKey }}"
+              {{- else }}
+              value: /etc/genius/tls/tls.key
+              {{- end }}
+            - name: LICENSE_SERVER_ROOT_CA
+              {{- if .Values.license.tls.existingSecret.name }}
+              value: "/etc/genius/tls/{{ .Values.license.tls.existingSecret.caKey }}"
+              {{- else }}
+              value: /etc/genius/tls/ca.crt
+              {{- end }}
             - name: RUST_LOG
               value: {{ .Values.loglevel | quote }}
           ports:
@@ -77,6 +105,29 @@ spec:
           volumeMounts:
             - name: "{{ include "genius-core.fullname" . }}-data"
               mountPath: /app/data
+            - name: license
+              mountPath: /etc/genius/license
+              readOnly: true
+            - name: license-tls
+              mountPath: /etc/genius/tls
+              readOnly: true
+      volumes:
+        - name: license
+          secret:
+            {{- with .Values.license.keyExistingSecret.name }}
+            secretName: {{ . | quote }}
+            {{- else }}
+            secretName: "{{ include "genius-core.fullname" . }}-license-key"
+            {{- end }}
+            defaultMode: 0400
+        - name: license-tls
+          secret:
+            {{- with .Values.license.tls.existingSecret.name }}
+            secretName: {{ . | quote }}
+            {{- else }}
+            secretName: "{{ include "genius-core.fullname" . }}-license-cert"
+            {{- end }}
+            defaultMode: 0400
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

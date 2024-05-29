@@ -1,6 +1,6 @@
 license:
   key: "ASDF-ASDF-ASDF-ASDF"
-  certs:
+  tls:
     cert: |-
       -----BEGIN CERTIFICATE-----
       PLACEHOLDER
