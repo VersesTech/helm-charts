@@ -17,12 +17,139 @@ helm -n my-namespace install my-release oci://registry.develop.verses.io/helm-in
 
 ## Configuration
 
+### License
+Genius Core must be configured with a proper license key and mTLS certificate bundle.
+
+The following values show how to set the required parameters for the license and certificate:
+
+```yaml
+license:
+  serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
+  productCode: genius-core
+  key: "YOUR_LICENSE_KEY"
+
+  tls:
+    cert: |-
+      -----BEGIN CERTIFICATE-----
+      ...
+      -----END CERTIFICATE-----
+    key: |-
+      -----BEGIN PRIVATE KEY-----
+      ...
+      -----END PRIVATE KEY-----
+    ca: |-
+      -----BEGIN CERTIFICATE-----
+      ...
+      -----END CERTIFICATE-----
+```
+
+Alternatively, you can also reference existing secrets in the same namespace:
+
+```yaml
+license:
+  serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
+  productCode: genius-core
+  keyExistingSecret:
+    name: my-license-key-secret
+    key: licenseKey
+
+  tls:
+    existingSecret:
+      name: my-license-key-cert
+      certKey: tls.crt
+      keyKey: tls.key
+      caKey: ca.crt
+```
+
 ### Authentication
 Authentication to Genius Core can be configured by setting variables to point to an existing OIDC provider.
 The following parameters in the values file:
 - `auth.jwksUri`: JWKS URI for your auth provider
 - `auth.defaultProvider`: Name of your auth provider
 - `auth.initialAdminUserId`: The `sub` claim from the initial admin user's auth token/id token.
+
+### Ingress
+Since there are both gRPC and websocket protocols, two options have been provided for ingress resource creation:
+- Use a single ingress that supports multiple backend protocols
+- Use separate ingresses for each backend protocol
+
+#### Single Ingress
+If your ingress controller supports proxying to multiple backend protocols, you can set the following values to create a single ingress resource:
+
+```yaml
+ingress:
+  enabled: true
+  separateIngresses: false
+  className: my-ingress-class
+  hosts:
+    - host: chart-example.local
+      paths:
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: '{{ include "genius-core.fullname" . }}'
+              port:
+                number: '{{ .Values.service.ports.grpc }}'
+    - host: chart-example-ws.local
+      paths:
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: '{{ include "genius-core.fullname" . }}'
+              port:
+                number: '{{ .Values.service.ports.ws }}'
+  tls:
+    - secretName: chart-example-tls
+      hosts:
+        - chart-example.local
+        - chart-example-ws.local
+```
+
+#### Separate Ingresses
+If your ingress controller does not support proxying to multiple backend protocols, use the following values to create separate ingress resources:
+
+```yaml
+ingress:
+  separateIngresses: true
+  grpc:
+    enabled: true
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: '{{ include "genius-core.fullname" . }}'
+                port:
+                  number:'{{ .Values.service.ports.grpc }}'
+    tls:
+      - secretName: chart-example-grpc-tls
+        hosts:
+          - chart-example.local
+  ws:
+    enabled: true
+    className: nginx
+    hosts:
+      - host: chart-example-ws.local
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: '{{ include "genius-core.fullname" . }}'
+                port:
+                  number: '{{ .Values.service.ports.ws }}'
+    tls:
+      - secretName: chart-example-ws-tls
+        hosts:
+          - chart-example-ws.local
+```
 
 ## Values
 
