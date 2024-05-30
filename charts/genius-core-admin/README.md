@@ -16,8 +16,37 @@ helm -n my-namespace install my-release oci://registry.develop.verses.io/helm-in
 ```
 
 ## Configuration
+The admin console can be configured by setting the following values:
+```yaml
+externalDomain: chart-example.local
+geniusCoreUrl: http://genius-core:50052
+auth:
+  issuerUrl: YOUR_OIDC_ISSUER_URL
+  clientId: YOUR_OIDC_CLIENT_ID
+  clientSecret: YOUR_OIDC_CLIENT_SECRET
+  audience: genius-core
+  scopes: openid profile email
+```
 
-### Authentication
+Alternatively, you may override the entire config if you do not wish to use the included structure values:
+```yaml
+config: |
+  NEXT_PUBLIC_APP_GENIUS_DB_URL='http://genius-core:50052'
+  AUTH_URL='https://chart-example.local'
+  AUTH_SECRET='RANDOM_32_LENGTH_STRING'
+  CLIENT_ID='YOUR_OIDC_CLIENT_ID'
+  CLIENT_SECRET='YOUR_OIDC_CLIENT_SECRET'
+  ISSUER_BASE_URL='YOUR_OIDC_ISSUER_URL'
+  AUDIENCE='genius-core'
+  AUTH_SCOPE='openid profile email'
+```
+
+You can also use an existing secret if you are templating your own secret:
+```yaml
+configExistingSecret:
+  name: my-secret-with-env-config
+  key: .env.production
+```
 
 ## Values
 
