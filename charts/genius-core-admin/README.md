@@ -1,6 +1,6 @@
 # genius-core-admin
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.44](https://img.shields.io/badge/AppVersion-2.0.44-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.53](https://img.shields.io/badge/AppVersion-2.0.53-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -24,17 +24,24 @@ helm -n my-namespace install my-release oci://registry.develop.verses.io/helm-in
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
+| auth | object | `{"audience":"genius-core","clientId":"","clientSecret":"","issuerUrl":"","scopes":"openid profile email"}` | Auth configuration |
+| auth.audience | string | `"genius-core"` | Audience (optional) |
+| auth.clientId | string | `""` | Client ID |
+| auth.clientSecret | string | `""` | Client Secret |
+| auth.issuerUrl | string | `""` | Issuer URL |
+| auth.scopes | string | `"openid profile email"` | Space-separated list of OIDC scopes |
 | autoscaling.enabled | bool | `false` |  |
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
-| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL='http://genius-core:50052'\nUNLEASH_SERVER_API_URL=''\nUNLEASH_SERVER_API_TOKEN=''\nNEXT_PUBLIC_UNLEASH_SERVER_API_URL=''\nNEXT_PUBLIC_UNLEASH_FRONTEND_API_TOKEN=''\nSENTRY_AUTH_TOKEN=''\nAUTH_URL={{ printf \"https://%s\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID=''\nCLIENT_SECRET=''\nISSUER_BASE_URL=''\nAUDIENCE=''\nAUTH_SCOPE='openid profile email'\n"` | Secret configuration |
+| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}\nAUTH_URL={{ printf \"https://%s\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID={{ .Values.clientId | squote }}\nCLIENT_SECRET={{ .Values.clientSecret | squote }}\nISSUER_BASE_URL={{ .Values.issuerUrl | squote }}\nAUDIENCE={{ .Values.audience | squote }}\nAUTH_SCOPE={{ .Values.scopes | squote }}\n"` | Secret configuration |
 | configExistingSecret | object | `{"key":".env.production","name":""}` | Reference an existing secret containing the env configuration |
 | configExistingSecret.key | string | `".env.production"` | Key inside the secret |
 | configExistingSecret.name | string | `""` | Name of the secret |
 | externalDomain | string | `"chart-example.local"` | Externally reachable domai |
 | extraObjects | list | `[]` | Extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | fullnameOverride | string | `""` |  |
+| geniusCoreUrl | string | `"http://genius-core:50052"` |  |
 | httpRoute.annotations | object | `{}` |  |
 | httpRoute.enabled | bool | `false` |  |
 | httpRoute.hostnames | list | `[]` |  |
@@ -72,7 +79,6 @@ helm -n my-namespace install my-release oci://registry.develop.verses.io/helm-in
 | securityContext.runAsGroup | int | `1001` |  |
 | securityContext.runAsNonRoot | bool | `true` |  |
 | securityContext.runAsUser | int | `1001` |  |
-| sentry.authTokenSecretsManagerSecretName | string | `"genius-core-admin-sentry-auth-token"` |  |
 | service.port | int | `3000` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.annotations | object | `{}` |  |
