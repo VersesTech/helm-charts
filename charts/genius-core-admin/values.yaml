@@ -19,7 +19,7 @@ auth:
 # -- Secret configuration
 config: |
   NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}
-  AUTH_URL={{ printf "https://%s" .Values.externalDomain | squote }}
+  AUTH_URL={{ printf "https://%s/api/auth" .Values.externalDomain | squote }}
   AUTH_SECRET={{ randAlphaNum 32 | squote }}
   CLIENT_ID={{ .Values.auth.clientId | squote }}
   CLIENT_SECRET={{ .Values.auth.clientSecret | squote }}
