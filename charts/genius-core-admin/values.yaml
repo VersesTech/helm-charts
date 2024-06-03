@@ -1,4 +1,4 @@
-# -- Externally reachable domai
+# -- Externally reachable domain
 externalDomain: chart-example.local
 
 geniusCoreUrl: http://genius-core:50052
@@ -21,11 +21,11 @@ config: |
   NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}
   AUTH_URL={{ printf "https://%s" .Values.externalDomain | squote }}
   AUTH_SECRET={{ randAlphaNum 32 | squote }}
-  CLIENT_ID={{ .Values.clientId | squote }}
-  CLIENT_SECRET={{ .Values.clientSecret | squote }}
-  ISSUER_BASE_URL={{ .Values.issuerUrl | squote }}
-  AUDIENCE={{ .Values.audience | squote }}
-  AUTH_SCOPE={{ .Values.scopes | squote }}
+  CLIENT_ID={{ .Values.auth.clientId | squote }}
+  CLIENT_SECRET={{ .Values.auth.clientSecret | squote }}
+  ISSUER_BASE_URL={{ .Values.auth.issuerUrl | squote }}
+  AUDIENCE={{ .Values.auth.audience | squote }}
+  AUTH_SCOPE={{ .Values.auth.scopes | squote }}
 
 # -- Reference an existing secret containing the env configuration
 configExistingSecret:

@@ -63,11 +63,11 @@ configExistingSecret:
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
-| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}\nAUTH_URL={{ printf \"https://%s\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID={{ .Values.clientId | squote }}\nCLIENT_SECRET={{ .Values.clientSecret | squote }}\nISSUER_BASE_URL={{ .Values.issuerUrl | squote }}\nAUDIENCE={{ .Values.audience | squote }}\nAUTH_SCOPE={{ .Values.scopes | squote }}\n"` | Secret configuration |
+| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}\nAUTH_URL={{ printf \"https://%s\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID={{ .Values.auth.clientId | squote }}\nCLIENT_SECRET={{ .Values.auth.clientSecret | squote }}\nISSUER_BASE_URL={{ .Values.auth.issuerUrl | squote }}\nAUDIENCE={{ .Values.auth.audience | squote }}\nAUTH_SCOPE={{ .Values.auth.scopes | squote }}\n"` | Secret configuration |
 | configExistingSecret | object | `{"key":".env.production","name":""}` | Reference an existing secret containing the env configuration |
 | configExistingSecret.key | string | `".env.production"` | Key inside the secret |
 | configExistingSecret.name | string | `""` | Name of the secret |
-| externalDomain | string | `"chart-example.local"` | Externally reachable domai |
+| externalDomain | string | `"chart-example.local"` | Externally reachable domain |
 | extraObjects | list | `[]` | Extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | fullnameOverride | string | `""` |  |
 | geniusCoreUrl | string | `"http://genius-core:50052"` |  |
