@@ -1,6 +1,6 @@
 # genius-core-admin
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.53](https://img.shields.io/badge/AppVersion-2.0.53-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.59](https://img.shields.io/badge/AppVersion-2.0.59-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -63,7 +63,7 @@ configExistingSecret:
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
-| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}\nAUTH_URL={{ printf \"https://%s\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID={{ .Values.auth.clientId | squote }}\nCLIENT_SECRET={{ .Values.auth.clientSecret | squote }}\nISSUER_BASE_URL={{ .Values.auth.issuerUrl | squote }}\nAUDIENCE={{ .Values.auth.audience | squote }}\nAUTH_SCOPE={{ .Values.auth.scopes | squote }}\n"` | Secret configuration |
+| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}\nAUTH_URL={{ printf \"https://%s/api/auth\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID={{ .Values.auth.clientId | squote }}\nCLIENT_SECRET={{ .Values.auth.clientSecret | squote }}\nISSUER_BASE_URL={{ .Values.auth.issuerUrl | squote }}\nAUDIENCE={{ .Values.auth.audience | squote }}\nAUTH_SCOPE={{ .Values.auth.scopes | squote }}\n"` | Secret configuration |
 | configExistingSecret | object | `{"key":".env.production","name":""}` | Reference an existing secret containing the env configuration |
 | configExistingSecret.key | string | `".env.production"` | Key inside the secret |
 | configExistingSecret.name | string | `""` | Name of the secret |
