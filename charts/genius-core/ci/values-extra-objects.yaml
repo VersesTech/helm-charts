@@ -10,7 +10,7 @@ license:
       caKey: ca.crt
 extraObjects:
   - |-
-    apiVersion: external-secrets.io/v1alpha1
+    apiVersion: external-secrets.io/v1beta1
     kind: ExternalSecret
     metadata:
       name: "{{ include "genius-core.fullname" . }}-license"
