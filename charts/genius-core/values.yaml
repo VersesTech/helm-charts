@@ -255,5 +255,5 @@ pdb:
 ## Note: Supports use of custom Helm templates
 extraObjects: []
 
-#additionalEnv: 
+additionalEnv: []
 # key: value
