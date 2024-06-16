@@ -254,3 +254,6 @@ pdb:
 # -- Extra K8s manifests to deploy
 ## Note: Supports use of custom Helm templates
 extraObjects: []
+
+#additionalEnv: 
+# key: value

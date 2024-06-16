@@ -86,6 +86,9 @@ spec:
               {{- end }}
             - name: RUST_LOG
               value: {{ .Values.loglevel | quote }}
+            {{- if .Values.additionalEnv }}
+              {{ .Values.additionalEnv | toYaml . | nindent 12 }}
+            {{- end}}
           ports:
             - name: grpc
               containerPort: {{ .Values.service.ports.grpc }}
