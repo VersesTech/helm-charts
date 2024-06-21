@@ -46,8 +46,13 @@ spec:
               value: "0.0.0.0:8080"
             - name: MODELS_DIR
               value: /app/models
+            {{- if .Values.auth.issuerUri }}
+            - name: AUTH_OIDC_URI
+              value: {{ .Values.auth.issuerUri | quote }}
+            {{- else if .Values.auth.jwksUri }}
             - name: JWKS_URI
               value: {{ .Values.auth.jwksUri | quote }}
+            {{- end }}
             - name: DEFAULT_ADMIN_ID
               value: {{ .Values.auth.initialAdminUserId | quote }}
             - name: DEFAULT_ADMIN_PROVIDER

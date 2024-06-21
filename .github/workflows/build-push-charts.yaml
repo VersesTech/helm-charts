@@ -42,6 +42,17 @@ jobs:
           HELM_INTERNAL_REGISTRY_USERNAME: ${{ secrets.HELM_INTERNAL_REGISTRY_USERNAME }}
           HELM_INTERNAL_REGISTRY_PASSWORD: ${{ secrets.HELM_INTERNAL_REGISTRY_PASSWORD }}
 
-      - name: Push chart
+      - name: Push chart to verses
         run: |-
           helm push dist/${{ matrix.chart }}-${{ matrix.version }}.tgz oci://registry.develop.verses.io/helm-internal
+      
+      - name: Login to ghcr
+        run: |-
+          echo "${HELM_GHCR_REGISTRY_PASSWORD}" | helm registry login ghcr.io/versestech/helm-charts --username "${HELM_GHCR_REGISTRY_USERNAME}" --password-stdin
+        env:
+          HELM_GHCR_REGISTRY_USERNAME: ${{ github.actor }}
+          HELM_GHCR_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push chart to ghcr
+        run: |-
+          helm push dist/${{ matrix.chart }}-${{ matrix.version }}.tgz oci://ghcr.io/versestech/helm-charts
