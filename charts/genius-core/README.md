@@ -64,7 +64,7 @@ license:
 ### Authentication
 Authentication to Genius Core can be configured by setting variables to point to an existing OIDC provider.
 The following parameters in the values file:
-- `auth.issuerUri`: Auth issuer URI for your auth provider (usually `<ISSUER_DOMAIN>/.well-known/openid-configuration`)
+- `auth.issuerWellKnownUri`: Auth issuer URI for your auth provider (usually `<ISSUER_DOMAIN>/.well-known/openid-configuration`)
   - (alternatively) `auth.jwksUri`: JWKS URI for your auth provider
 - `auth.defaultProvider`: Name of your auth provider
 - `auth.initialAdminUserId`: The `sub` claim from the initial admin user's auth token/id token.
@@ -161,7 +161,7 @@ ingress:
 | allowedOrigins | string | `"*"` |  |
 | auth.defaultProvider | string | `"auth0"` |  |
 | auth.initialAdminUserId | string | `""` |  |
-| auth.issuerUri | string | `"https://kosm-dev-verses.us.auth0.com/.well-known/openid-configuration"` |  |
+| auth.issuerWellKnownUri | string | `"https://kosm-dev-verses.us.auth0.com/.well-known/openid-configuration"` |  |
 | auth.jwksUri | string | `"https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json"` |  |
 | auth.skipValidateJwtExpiry | bool | `false` |  |
 | extraObjects | list | `[]` | Extra K8s manifests to deploy # Note: Supports use of custom Helm templates |

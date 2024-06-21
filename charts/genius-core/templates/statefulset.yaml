@@ -46,9 +46,9 @@ spec:
               value: "0.0.0.0:8080"
             - name: MODELS_DIR
               value: /app/models
-            {{- if .Values.auth.issuerUri }}
+            {{- if .Values.auth.issuerWellKnownUri }}
             - name: AUTH_OIDC_URI
-              value: {{ .Values.auth.issuerUri | quote }}
+              value: {{ .Values.auth.issuerWellKnownUri | quote }}
             {{- else if .Values.auth.jwksUri }}
             - name: JWKS_URI
               value: {{ .Values.auth.jwksUri | quote }}

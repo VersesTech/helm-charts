@@ -3,7 +3,7 @@ serviceHostname: genius-core
 loglevel: info
 
 auth:
-  issuerUri: https://kosm-dev-verses.us.auth0.com/.well-known/openid-configuration
+  issuerWellKnownUri: https://kosm-dev-verses.us.auth0.com/.well-known/openid-configuration
   jwksUri: https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json
   initialAdminUserId: ""
   defaultProvider: auth0

@@ -23,6 +23,8 @@ jobs:
             version: 0.1.0
           - chart: genius-core-admin
             version: 0.1.0
+    permissions:
+      packages: write
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
