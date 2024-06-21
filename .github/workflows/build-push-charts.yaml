@@ -24,6 +24,7 @@ jobs:
           - chart: genius-core-admin
             version: 0.1.0
     permissions:
+      contents: read
       packages: write
     steps:
       - name: Checkout sources
