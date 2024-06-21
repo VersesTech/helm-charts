@@ -25,7 +25,6 @@ The following values show how to set the required parameters for the license and
 ```yaml
 license:
   serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
-  productCode: genius-core
   key: "YOUR_LICENSE_KEY"
 
   tls:
@@ -227,7 +226,6 @@ ingress:
 | license.keyExistingSecret | object | `{"key":"licenseKey","name":""}` | Reference to an existing k8s secret |
 | license.keyExistingSecret.key | string | `"licenseKey"` | Key inside secret that contains the secret content |
 | license.keyExistingSecret.name | string | `""` | Name of the existing secret |
-| license.productCode | string | `"genius-core"` |  |
 | license.serverUrl | string | `"https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses"` |  |
 | license.tls | object | `{"ca":"","cert":"","existingSecret":{"caKey":"","certKey":"","keyKey":"","name":""},"key":""}` | Cerrtificates from onboarding portal |
 | license.tls.ca | string | `""` | CA certificate from onboarding portal |

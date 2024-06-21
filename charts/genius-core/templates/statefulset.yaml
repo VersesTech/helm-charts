@@ -63,8 +63,6 @@ spec:
             {{- end }}
             - name: LICENSE_SERVER_URI
               value: {{ .Values.license.serverUrl | quote }}
-            - name: LICENSE_PRODUCT_CODE
-              value: {{ .Values.license.productCode | quote }}
             - name: LICENSE_KEY
               {{- if .Values.license.keyExistingSecret.name }}
               value: "/etc/genius/license/{{ .Values.license.keyExistingSecret.key }}"
