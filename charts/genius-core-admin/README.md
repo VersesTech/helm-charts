@@ -84,7 +84,7 @@ The key inside the secret must be `.env.production`.
 | httpRoute.rules[0].matches[0].path.type | string | `"PathPrefix"` |  |
 | httpRoute.rules[0].matches[0].path.value | string | `"/"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"518625631402.dkr.ecr.us-west-1.amazonaws.com/versestech/genius-core-admin"` |  |
+| image.repository | string | `"ghcr.io/versestech/helm-charts/genius-core-admin"` |  |
 | image.tag | string | `""` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
