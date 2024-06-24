@@ -51,13 +51,8 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: env-config
-              {{- if .Values.configExistingSecret.name }}
-              mountPath: "/app/{{ .Values.configExistingSecret.key }}"
-              subPath: {{ .Values.configExistingSecret.key | quote }}
-              {{- else if .Values.config }}
-              mountPath: /app/.env.production
+              mountPath: /app/run/.env.production
               subPath: .env.production
-              {{- end }}
               readOnly: true
       volumes:
         - name: env-config

@@ -1,6 +1,6 @@
 # genius-core-admin
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.60](https://img.shields.io/badge/AppVersion-2.0.60-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.0.63](https://img.shields.io/badge/AppVersion-2.0.63-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -45,8 +45,8 @@ You can also use an existing secret if you are templating your own secret:
 ```yaml
 configExistingSecret:
   name: my-secret-with-env-config
-  key: .env.production
 ```
+The key inside the secret must be `.env.production`.
 
 ## Values
 
@@ -64,9 +64,8 @@ configExistingSecret:
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
 | config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}\nAUTH_URL={{ printf \"https://%s/api/auth\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ randAlphaNum 32 | squote }}\nCLIENT_ID={{ .Values.auth.clientId | squote }}\nCLIENT_SECRET={{ .Values.auth.clientSecret | squote }}\nISSUER_BASE_URL={{ .Values.auth.issuerUrl | squote }}\nAUDIENCE={{ .Values.auth.audience | squote }}\nAUTH_SCOPE={{ .Values.auth.scopes | squote }}\n"` | Secret configuration |
-| configExistingSecret | object | `{"key":".env.production","name":""}` | Reference an existing secret containing the env configuration |
-| configExistingSecret.key | string | `".env.production"` | Key inside the secret |
-| configExistingSecret.name | string | `""` | Name of the secret |
+| configExistingSecret | object | `{"name":""}` | Reference an existing secret containing the env configuration |
+| configExistingSecret.name | string | `""` | Name of the secret. The key inside the secret must be `.env.production` |
 | externalDomain | string | `"chart-example.local"` | Externally reachable domain |
 | extraObjects | list | `[]` | Extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | fullnameOverride | string | `""` |  |
@@ -102,12 +101,12 @@ configExistingSecret:
 | pdb.maxUnavailable | string | `""` |  |
 | pdb.minAvailable | string | `""` |  |
 | podAnnotations | object | `{}` |  |
-| podSecurityContext.fsGroup | int | `1001` |  |
+| podSecurityContext.fsGroup | int | `65532` |  |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` |  |
-| securityContext.runAsGroup | int | `1001` |  |
+| securityContext.runAsGroup | int | `65532` |  |
 | securityContext.runAsNonRoot | bool | `true` |  |
-| securityContext.runAsUser | int | `1001` |  |
+| securityContext.runAsUser | int | `65532` |  |
 | service.port | int | `3000` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.annotations | object | `{}` |  |

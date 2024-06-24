@@ -29,10 +29,8 @@ config: |
 
 # -- Reference an existing secret containing the env configuration
 configExistingSecret:
-  # -- Name of the secret
+  # -- Name of the secret. The key inside the secret must be `.env.production`
   name: ""
-  # -- Key inside the secret
-  key: .env.production
 
 replicaCount: 1
 
@@ -58,7 +56,7 @@ serviceAccount:
 podAnnotations: {}
 
 podSecurityContext:
-  fsGroup: 1001
+  fsGroup: 65532
 
 securityContext:
   # capabilities:
@@ -66,8 +64,8 @@ securityContext:
   #   - ALL
   # readOnlyRootFilesystem: true
   runAsNonRoot: true
-  runAsUser: 1001
-  runAsGroup: 1001
+  runAsUser: 65532
+  runAsGroup: 65532
 
 service:
   type: ClusterIP

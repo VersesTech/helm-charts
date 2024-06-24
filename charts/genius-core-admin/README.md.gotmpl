@@ -51,8 +51,8 @@ You can also use an existing secret if you are templating your own secret:
 ```yaml
 configExistingSecret:
   name: my-secret-with-env-config
-  key: .env.production
 ```
+The key inside the secret must be `.env.production`.
 
 {{ template "chart.sourcesSection" . }}
 
