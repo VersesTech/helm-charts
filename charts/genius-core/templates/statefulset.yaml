@@ -57,12 +57,6 @@ spec:
               value: {{ .Values.auth.initialAdminUserId | quote }}
             - name: DEFAULT_ADMIN_PROVIDER
               value: {{ .Values.auth.defaultProvider | quote }}
-            {{- if .Values.auth.skipValidateJwtExpiry }}
-            - name: AUTH_VALIDATE_JWT_EXPIRY
-              value: "false"
-            {{- end }}
-            - name: LICENSE_SERVER_URI
-              value: {{ .Values.license.serverUrl | quote }}
             - name: LICENSE_KEY
               {{- if .Values.license.keyExistingSecret.name }}
               value: "/etc/genius/license/{{ .Values.license.keyExistingSecret.key }}"

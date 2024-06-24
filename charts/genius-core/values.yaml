@@ -3,14 +3,12 @@ serviceHostname: genius-core
 loglevel: info
 
 auth:
-  issuerWellKnownUri: https://kosm-dev-verses.us.auth0.com/.well-known/openid-configuration
-  jwksUri: https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json
+  issuerWellKnownUri: ""
+  jwksUri: ""
+  defaultProvider: ""
   initialAdminUserId: ""
-  defaultProvider: auth0
-  skipValidateJwtExpiry: false
 
 license:
-  serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
   # -- License key from onboarding portal
   key: ""
   # -- Reference to an existing k8s secret
@@ -76,7 +74,7 @@ podAnnotations: {}
 
 podSecurityContext:
   # This is the `verses` user as defined in `Dockerfile``
-  fsGroup: 1001
+  fsGroup: 65532
 
 securityContext:
   # capabilities:
@@ -84,7 +82,8 @@ securityContext:
   #   - ALL
   # readOnlyRootFilesystem: true
   runAsNonRoot: true
-  runAsUser: 1001
+  runAsUser: 65532
+  runAsGroup: 65532
 
 # gRPC service
 service:

@@ -30,7 +30,6 @@ The following values show how to set the required parameters for the license and
 
 ```yaml
 license:
-  serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
   key: "YOUR_LICENSE_KEY"
 
   tls:
@@ -52,8 +51,6 @@ Alternatively, you can also reference existing secrets in the same namespace:
 
 ```yaml
 license:
-  serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
-  productCode: genius-core
   keyExistingSecret:
     name: my-license-key-secret
     key: licenseKey

@@ -1,6 +1,6 @@
 # genius-core
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.33.0](https://img.shields.io/badge/AppVersion-2.33.0-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.35.0](https://img.shields.io/badge/AppVersion-2.35.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -24,7 +24,6 @@ The following values show how to set the required parameters for the license and
 
 ```yaml
 license:
-  serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
   key: "YOUR_LICENSE_KEY"
 
   tls:
@@ -46,8 +45,6 @@ Alternatively, you can also reference existing secrets in the same namespace:
 
 ```yaml
 license:
-  serverUrl: https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses
-  productCode: genius-core
   keyExistingSecret:
     name: my-license-key-secret
     key: licenseKey
@@ -158,11 +155,10 @@ ingress:
 | additionalEnv | list | `[]` |  |
 | affinity | object | `{}` |  |
 | allowedOrigins | string | `"*"` |  |
-| auth.defaultProvider | string | `"auth0"` |  |
+| auth.defaultProvider | string | `""` |  |
 | auth.initialAdminUserId | string | `""` |  |
-| auth.issuerWellKnownUri | string | `"https://kosm-dev-verses.us.auth0.com/.well-known/openid-configuration"` |  |
-| auth.jwksUri | string | `"https://kosm-dev-verses.us.auth0.com/.well-known/jwks.json"` |  |
-| auth.skipValidateJwtExpiry | bool | `false` |  |
+| auth.issuerWellKnownUri | string | `""` |  |
+| auth.jwksUri | string | `""` |  |
 | extraObjects | list | `[]` | Extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | fullnameOverride | string | `""` |  |
 | httpRoute.annotations | object | `{}` |  |
@@ -226,7 +222,6 @@ ingress:
 | license.keyExistingSecret | object | `{"key":"licenseKey","name":""}` | Reference to an existing k8s secret |
 | license.keyExistingSecret.key | string | `"licenseKey"` | Key inside secret that contains the secret content |
 | license.keyExistingSecret.name | string | `""` | Name of the existing secret |
-| license.serverUrl | string | `"https://genius-license-server-middleware.license.dev.verses.build/api/v1/licenses"` |  |
 | license.tls | object | `{"ca":"","cert":"","existingSecret":{"caKey":"","certKey":"","keyKey":"","name":""},"key":""}` | Cerrtificates from onboarding portal |
 | license.tls.ca | string | `""` | CA certificate from onboarding portal |
 | license.tls.cert | string | `""` | Certificate from onboarding portal |
@@ -246,11 +241,12 @@ ingress:
 | persistence.size | string | `"10Gi"` |  |
 | persistence.storageClassName | string | `""` |  |
 | podAnnotations | object | `{}` |  |
-| podSecurityContext.fsGroup | int | `1001` |  |
+| podSecurityContext.fsGroup | int | `65532` |  |
 | replicaCount | int | `1` |  |
 | resources | object | `{}` |  |
+| securityContext.runAsGroup | int | `65532` |  |
 | securityContext.runAsNonRoot | bool | `true` |  |
-| securityContext.runAsUser | int | `1001` |  |
+| securityContext.runAsUser | int | `65532` |  |
 | service.ports.grpc | int | `50052` |  |
 | service.ports.ws | int | `8080` |  |
 | service.type | string | `"ClusterIP"` |  |
