@@ -152,13 +152,13 @@ ingress:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| additionalEnv | list | `[]` |  |
 | affinity | object | `{}` |  |
 | allowedOrigins | string | `"*"` |  |
 | auth.defaultProvider | string | `""` |  |
 | auth.initialAdminUserId | string | `""` |  |
 | auth.issuerWellKnownUri | string | `""` |  |
 | auth.jwksUri | string | `""` |  |
+| extraEnv | list | `[]` | Extra env vars to add to the container |
 | extraObjects | list | `[]` | Extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | fullnameOverride | string | `""` |  |
 | httpRoute.annotations | object | `{}` |  |
@@ -182,7 +182,7 @@ ingress:
 | httpRoute.rules[1].matches[0].path.type | string | `"PathPrefix"` |  |
 | httpRoute.rules[1].matches[0].path.value | string | `"/"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"518625631402.dkr.ecr.us-west-1.amazonaws.com/versestech/alexandria"` |  |
+| image.repository | string | `"ghcr.io/versestech/helm-charts/genius-core"` |  |
 | image.tag | string | `""` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |

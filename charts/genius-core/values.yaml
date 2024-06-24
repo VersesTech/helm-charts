@@ -52,7 +52,7 @@ license:
 replicaCount: 1
 
 image:
-  repository: 518625631402.dkr.ecr.us-west-1.amazonaws.com/versestech/alexandria
+  repository: ghcr.io/versestech/helm-charts/genius-core
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -245,6 +245,11 @@ tolerations: []
 
 affinity: {}
 
+# -- Extra env vars to add to the container
+extraEnv: []
+  # - name:
+  #   value:
+
 pdb:
   enabled: false
   minAvailable: ""
@@ -253,6 +258,3 @@ pdb:
 # -- Extra K8s manifests to deploy
 ## Note: Supports use of custom Helm templates
 extraObjects: []
-
-additionalEnv: []
-# key: value
