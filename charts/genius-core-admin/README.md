@@ -64,7 +64,7 @@ The key inside the secret must be `.env.production`.
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
-| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}\nAUTH_URL={{ printf \"https://%s/api/auth\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ .Values.auth.secret | randAlphaNum 32 | squote }}\nCLIENT_ID={{ .Values.auth.clientId | squote }}\nCLIENT_SECRET={{ .Values.auth.clientSecret | squote }}\nISSUER_BASE_URL={{ .Values.auth.issuerUrl | squote }}\nAUDIENCE={{ .Values.auth.audience | squote }}\nAUTH_SCOPE={{ .Values.auth.scopes | squote }}\n"` | Secret configuration |
+| config | string | `"NEXT_PUBLIC_APP_GENIUS_DB_URL={{ .Values.geniusCoreUrl | squote }}\nAUTH_URL={{ printf \"https://%s/api/auth\" .Values.externalDomain | squote }}\nAUTH_SECRET={{ .Values.auth.secret | default (randAlphaNum 32) | squote }}\nCLIENT_ID={{ .Values.auth.clientId | squote }}\nCLIENT_SECRET={{ .Values.auth.clientSecret | squote }}\nISSUER_BASE_URL={{ .Values.auth.issuerUrl | squote }}\nAUDIENCE={{ .Values.auth.audience | squote }}\nAUTH_SCOPE={{ .Values.auth.scopes | squote }}\n"` | Secret configuration |
 | configExistingSecret | object | `{"name":""}` | Reference an existing secret containing the env configuration |
 | configExistingSecret.name | string | `""` | Name of the secret. The key inside the secret must be `.env.production` |
 | externalDomain | string | `"chart-example.local"` | Externally reachable domain |
