@@ -182,7 +182,7 @@ ingress:
 | httpRoute.rules[1].matches[0].path.type | string | `"PathPrefix"` |  |
 | httpRoute.rules[1].matches[0].path.value | string | `"/"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"ghcr.io/versestech/helm-charts/genius-core"` |  |
+| image.repository | string | `"ghcr.io/versestech/genius-core"` |  |
 | image.tag | string | `""` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |

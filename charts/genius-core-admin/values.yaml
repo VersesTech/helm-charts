@@ -37,7 +37,7 @@ configExistingSecret:
 replicaCount: 1
 
 image:
-  repository: ghcr.io/versestech/helm-charts/genius-core-admin
+  repository: ghcr.io/versestech/genius-core-admin
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
