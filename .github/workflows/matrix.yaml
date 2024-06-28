@@ -1,0 +1,27 @@
+name: Generate Matrix
+
+on:
+  workflow_call:
+    outputs:
+      matrix:
+        description: Generated matrix for charts
+        value: ${{ jobs.generate-matrix.outputs.matrix }}
+
+jobs:
+  generate-matrix:
+    name: Generate matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.generate-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      
+      - name: Generate matrix
+        id: generate-matrix
+        # Generates a matrix of the following format:
+        # chart:
+        #   - charts/chart1
+        #   - charts/chart2
+        run: |
+          echo "matrix="$(ls -1 charts/ | jq -Rncr '{ chart: [ inputs | "charts/\(.)" ] }')"" >> "${GITHUB_OUTPUT}"

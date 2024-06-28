@@ -1,0 +1,14 @@
+name: CI (Release)
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  publish-charts:
+    name: Publish Helm charts
+    uses: VersesTech/github-actions/.github/workflows/helm-build-push.yaml@main
+    secrets: inherit
+    with:
+      chart: charts/

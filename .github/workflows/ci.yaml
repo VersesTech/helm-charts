@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-matrix:
+    name: Generate matrix
+    # Don't run on release commits
+    if: ${{ !contains(github.event.head_commit.message, '[skip build]') }}
+    uses: ./.github/workflows/matrix.yaml
+    secrets: inherit
+
+  check:
+    name: Check
+    # Don't run on release commits
+    if: ${{ !contains(github.event.head_commit.message, '[skip build]') }}
+    needs:
+      - generate-matrix
+    uses: VersesTech/github-actions/.github/workflows/helm-check.yaml@main
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    secrets: inherit
+    with:
+      chart: ${{ matrix.chart }}
+
+  build:
+    name: Build
+    # Don't run on release commits
+    if: ${{ !contains(github.event.head_commit.message, '[skip build]') }}
+    needs:
+      - generate-matrix
+    uses: VersesTech/github-actions/.github/workflows/helm-build-push.yaml@main
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    secrets: inherit
+    with:
+      chart: ${{ matrix.chart }}
+      version: test
+  
+  # create-release:
+  #   name: Create Release
+  #   # Don't run on release commits
+  #   if: ${{ !contains(github.event.head_commit.message, '[skip build]') }}
+  #   concurrency:
+  #     group: release
+  #     cancel-in-progress: false
+  #   needs:
+  #     - check
+  #     - build
+  #   uses: ./.github/workflows/release-please.yaml
+  #   secrets: inherit
+  #   with:
+  #     config-file: release-please-config.json
+  #     manifest-file: .release-please-manifest.json
