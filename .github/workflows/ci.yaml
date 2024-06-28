@@ -40,7 +40,7 @@ jobs:
     secrets: inherit
     with:
       chart: ${{ matrix.chart }}
-      version: test
+      push: false
   
   # create-release:
   #   name: Create Release
