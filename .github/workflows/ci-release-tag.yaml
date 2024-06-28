@@ -6,9 +6,19 @@ on:
       - published
 
 jobs:
+  generate-matrix:
+    name: Generate matrix
+    uses: ./.github/workflows/matrix.yaml
+    secrets: inherit
+
   publish-charts:
     name: Publish Helm charts
+    needs:
+      - generate-matrix
     uses: VersesTech/github-actions/.github/workflows/helm-build-push.yaml@main
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     secrets: inherit
     with:
-      chart: charts/
+      chart: ${{ matrix.chart }}
