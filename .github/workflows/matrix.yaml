@@ -52,6 +52,6 @@ jobs:
           echo "Include: ${include}"
           echo "include=${include}" >> "${GITHUB_OUTPUT}"
           
-          matrix="$(echo "${base_matrix}" | jq -rc --arg INCLUDE "${include}" '.include = $INCLUDE')"
+          matrix="$(echo "${base_matrix}" | jq -rc --arg INCLUDE "${include}" '. += {"include": $INCLUDE}')"
           echo "Computed matrix: ${matrix}"
           echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
