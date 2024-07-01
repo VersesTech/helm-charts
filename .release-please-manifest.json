@@ -1,6 +1,4 @@
 {
-  "genius-core": "0.1.0",
-  "genius-core-admin": "0.1.0",
   "charts/genius-core": "0.1.0",
   "charts/genius-core-admin": "0.1.0"
 }
