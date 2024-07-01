@@ -10,7 +10,7 @@ jobs:
     name: Get released chart
     runs-on: ubuntu-latest
     outputs:
-      chart: ${{ steps.regex-match.outputs.group1 }}
+      chart: 'charts/${{ steps.regex-match.outputs.group1 }}'
       chart-version: ${{ steps.regex-match.outputs.group2 }}
     steps:
       - uses: actions-ecosystem/action-regex-match@v2
