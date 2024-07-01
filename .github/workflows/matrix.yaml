@@ -7,9 +7,9 @@ on:
         description: Generated matrix for charts
         value: ${{ jobs.generate-matrix.outputs.matrix }}
 
-      includes:
-        description: Generated matrix includes for charts
-        value: ${{ jobs.generate-matrix.outputs.includes }}
+      includs:
+        description: Generated matrix include for charts
+        value: ${{ jobs.generate-matrix.outputs.include }}
 
 jobs:
   generate-matrix:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.generate-matrix.outputs.matrix }}
-      includes: ${{ steps.compute-includes.outputs.includes }}
+      include: ${{ steps.generate-matrix.outputs.include }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
           tee '${{ runner.temp }}/matrix.json' <<EOF
             {
               "matrix": ${base_matrix},
-              "includes": [
+              "include": [
                 {
                   "chart": "charts/genius-core",
                   "values-file": "charts/genius-core/ci/values-license-direct.yaml"
@@ -48,10 +48,10 @@ jobs:
           EOF
 
           cat '${{ runner.temp }}/matrix.json'
-          includes="$(cat '${{ runner.temp }}/matrix.json' | jq -rc '[ .matrix as $matrix | .includes[] | select(.chart as $key | $matrix | index($key)) ]')"
-          echo "Includes: ${includes}"
-          echo "includes=${includes}" >> "${GITHUB_OUTPUT}"
+          include="$(cat '${{ runner.temp }}/matrix.json' | jq -rc '[ .matrix.chart as $matrix | .include[] | select(.chart as $key | $matrix | index($key)) ]')"
+          echo "Include: ${include}"
+          echo "include=${include}" >> "${GITHUB_OUTPUT}"
           
-          matrix="$(echo "${base_matrix}" | jq -rc --arg INCLUDES "${includes}" '.include = $INCLUDES')"
+          matrix="$(echo "${base_matrix}" | jq -rc --arg INCLUDE "${include}" '.include = $INCLUDE')"
           echo "Computed matrix: ${matrix}"
           echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
