@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/VersesTech/helm-charts/compare/genius-core-admin-v0.1.3...genius-core-admin-v0.1.4) (2024-07-01)
+
+
+### Bug Fixes
+
+* includes ([784f2e5](https://github.com/VersesTech/helm-charts/commit/784f2e582149711872f6ac9f161501e05d58b89f))
+
 ## [0.1.3](https://github.com/VersesTech/helm-charts/compare/genius-core-admin-v0.1.2...genius-core-admin-v0.1.3) (2024-07-01)
 
 
