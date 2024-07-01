@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/VersesTech/helm-charts/compare/genius-core-admin-v0.1.1...genius-core-admin-v0.1.2) (2024-07-01)
+
+
+### Miscellaneous Chores
+
+* release 0.1.2 ([4bec22e](https://github.com/VersesTech/helm-charts/commit/4bec22e2a352a29ce1e3b1d9c725470f7f082584))
+
 ## [0.1.1](https://github.com/VersesTech/helm-charts/compare/genius-core-admin-v0.1.1...genius-core-admin-v0.1.1) (2024-07-01)
 
 
