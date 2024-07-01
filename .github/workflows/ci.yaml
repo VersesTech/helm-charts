@@ -37,6 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+      includes: ${{ fromJson(needs.generate-matrix.outputs.includes) }}
     secrets: inherit
     with:
       chart: ${{ matrix.chart }}

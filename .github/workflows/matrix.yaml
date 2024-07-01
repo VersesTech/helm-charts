@@ -7,12 +7,17 @@ on:
         description: Generated matrix for charts
         value: ${{ jobs.generate-matrix.outputs.matrix }}
 
+      includes:
+        description: Generated matrix includes for charts
+        value: ${{ jobs.generate-matrix.outputs.includes }}
+
 jobs:
   generate-matrix:
     name: Generate matrix
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.generate-matrix.outputs.matrix }}
+      includes: ${{ steps.compute-includes.outputs.includes }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -24,29 +29,29 @@ jobs:
         #   - charts/chart1
         #   - charts/chart2
         run: |
-          echo "matrix="$(ls -1 charts/ | jq -Rncr '{ chart: [ inputs | "charts/\(.)" ] }')"" >> "${GITHUB_OUTPUT}"
-          
-      - name: Compute includes
-        id: compute-includes
-        run: |-
+          base_matrix="$(ls -1 charts/ | jq -Rncr '{ chart: [ inputs | "charts/\(.)" ] }')"
+          echo "Base matrix: ${base_matrix}"
+
           tee '${{ runner.temp }}/matrix.json' <<EOF
             {
-              "matrix": ${MATRIX},
+              "matrix": ${base_matrix},
               "includes": [
                 {
                   "chart": "charts/genius-core",
-                  "values-file": "registry.develop.verses.io/helm-internal",
+                  "values-file": "charts/genius-core/ci/values-license-direct.yaml"
                 },
                 {
-                  "chart": "charts/genius-core-admin",
-                  "values-file": "ghcr.io/versestech/helm-charts",
+                  "chart": "charts/genius-core-admin"
                 }
               ]
             }
-            
           EOF
+
           cat '${{ runner.temp }}/matrix.json'
-          echo "$(cat '${{ runner.temp }}/matrix.json' | jq -rc '[ .matrix as $matrix | .includes[] | select(.chart as $key | $matrix | index($key)) ]')"
-          echo "includes="$(cat '${{ runner.temp }}/matrix.json' | jq -rc '[ .matrix as $matrix | .includes[] | select(.chart as $key | $matrix | index($key)) ]')"" >> "${GITHUB_OUTPUT}"
-        env:
-          MATRIX: ${{ steps.generate-matrix.outputs.matrix }}
+          includes="$(cat '${{ runner.temp }}/matrix.json' | jq -rc '[ .matrix as $matrix | .includes[] | select(.chart as $key | $matrix | index($key)) ]')"
+          echo "Includes: ${includes}"
+          echo "includes=${includes}" >> "${GITHUB_OUTPUT}"
+          
+          matrix="$(echo "${base_matrix}" | jq -rc --arg INCLUDES "${includes}" '.include = $INCLUDES')"
+          echo "Computed matrix: ${matrix}"
+          echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
