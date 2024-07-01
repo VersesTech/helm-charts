@@ -28,3 +28,4 @@ jobs:
     secrets: inherit
     with:
       chart: ${{ needs.get-chart.outputs.chart }}
+      registries: '["verses-internal", "ghcr"]'
