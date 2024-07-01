@@ -6,19 +6,25 @@ on:
       - published
 
 jobs:
-  generate-matrix:
-    name: Generate matrix
-    uses: ./.github/workflows/matrix.yaml
-    secrets: inherit
+  get-chart:
+    name: Get released chart
+    runs-on: ubuntu-latest
+    outputs:
+      chart: ${{ steps.regex-match.outputs.group1 }}
+      chart-version: ${{ steps.regex-match.outputs.group2 }}
+    steps:
+      - uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.event.release.tag_name }}
+          regex: |-
+            ^(.*?)-(v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)$/gm
 
   publish-charts:
     name: Publish Helm charts
     needs:
-      - generate-matrix
+      - get-chart
     uses: VersesTech/github-actions/.github/workflows/helm-build-push.yaml@main
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     secrets: inherit
     with:
-      chart: ${{ matrix.chart }}
+      chart: ${{ needs.get-chart.outputs.chart }}
