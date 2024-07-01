@@ -25,3 +25,28 @@ jobs:
         #   - charts/chart2
         run: |
           echo "matrix="$(ls -1 charts/ | jq -Rncr '{ chart: [ inputs | "charts/\(.)" ] }')"" >> "${GITHUB_OUTPUT}"
+          
+      - name: Compute includes
+        id: compute-includes
+        run: |-
+          tee '${{ runner.temp }}/matrix.json' <<EOF
+            {
+              "matrix": ${MATRIX},
+              "includes": [
+                {
+                  "chart": "charts/genius-core",
+                  "values-file": "registry.develop.verses.io/helm-internal",
+                },
+                {
+                  "chart": "charts/genius-core-admin",
+                  "values-file": "ghcr.io/versestech/helm-charts",
+                }
+              ]
+            }
+            
+          EOF
+          cat '${{ runner.temp }}/matrix.json'
+          echo "$(cat '${{ runner.temp }}/matrix.json' | jq -rc '[ .matrix as $matrix | .includes[] | select(.chart as $key | $matrix | index($key)) ]')"
+          echo "includes="$(cat '${{ runner.temp }}/matrix.json' | jq -rc '[ .matrix as $matrix | .includes[] | select(.chart as $key | $matrix | index($key)) ]')"" >> "${GITHUB_OUTPUT}"
+        env:
+          MATRIX: ${{ steps.generate-matrix.outputs.matrix }}
