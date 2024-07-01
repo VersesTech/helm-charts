@@ -1,0 +1,81 @@
+name: Test Charts in K3S
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  list-values-files:
+    name: Create matrix from values files
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      
+      - name: Generate matrix
+        id: set-matrix
+        run: |-
+          echo "matrix="$(ls charts/**/ci/values-*.yaml | jq -R -s -c 'split("\n")[:-1]')"" >> "${GITHUB_OUTPUT}"
+  
+  create-k3s-cluster:
+    name: Start k3s cluster
+    needs:
+      - list-values-files
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        values-file: ${{ fromJson(needs.list-values-files.outputs.matrix )}}
+        k3s-version:
+          - "1.30"
+        include:
+          - k3s-version: "1.30"
+            image-tag: v1.30.0-k3s1
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Start k3s server
+        uses: addnab/docker-run-action@v3
+        with:
+          image: rancher/k3s:${{ matrix.image-tag }}
+          options: >-
+            --name k3s-server
+            --hostname k3s-server
+            --privileged
+            -p 6443:6443
+            -v ${{ github.workspace }}/.github/workflows/k3s/config.yaml:/etc/rancher/k3s/config.yaml.d/00-github-actions-ci.yaml
+            -d
+          run: |-
+            /bin/k3s server
+
+      - name: Wait for k3s server
+        run: |-
+          mkdir -p "${HOME}/.kube/"
+
+          retries=5
+          while ((retries > 0))
+          do
+            docker cp k3s-server:/etc/rancher/k3s/k3s.yaml "${HOME}/.kube/config" && \
+            kubectl version && \
+            break
+
+            echo "Waiting for k3s..."
+            sleep 10
+            ((retries --))
+          done
+
+          if ((retries == 0))
+          then
+            echo "Failed to wait for k3s server"
+            exit 1
+          fi
+      
+      - name: Test helm chart
+        run: |-
+          CHART="$(echo '${{ matrix.values-file }}' | cut -d '/' -f 1-2)"
+          RELEASE_NAME="$(echo "${CHART}" | cut -d '/' -f 2)"
+          echo "${CHART}"
+          helm -n test-ns template "${RELEASE_NAME}" "${CHART}" -f '${{ matrix.values-file }}'

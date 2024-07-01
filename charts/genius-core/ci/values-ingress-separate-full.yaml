@@ -1,0 +1,40 @@
+ingress:
+  separateIngresses: true
+
+  grpc:
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: '{{ include "genius-core.fullname" . }}'
+                port:
+                  number: '{{ .Values.service.ports.grpc }}'
+    tls:
+      - secretName: chart-example-tls
+        hosts:
+          - chart-example.local
+
+  ws:
+    className: nginx
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example-ws.local
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: '{{ include "genius-core.fullname" . }}'
+                port:
+                  number: '{{ .Values.service.ports.ws }}'
+    tls:
+      - secretName: chart-example-tls
+        hosts:
+          - chart-example-ws.local

@@ -1,0 +1,18 @@
+{{- if .Values.pdb.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "genius-core.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "genius-core.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.pdb.minAvailable }}
+  minAvailable: {{ . | int }}
+  {{- else }}
+  maxUnavailable: {{ .Values.pdb.maxUnavailable | int }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "genius-core.selectorLabels" . | nindent 6 }}
+{{- end }}

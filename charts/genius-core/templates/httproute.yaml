@@ -1,0 +1,78 @@
+{{- if .Values.httpRoute.enabled -}}
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: {{ include "genius-core.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "genius-core.labels" . | nindent 4 }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- range .Values.httpRoute.parentRefs }}
+    - name: {{ tpl .name $ | quote }}
+      {{- with .group }}
+      group: {{ . | quote }}
+      {{- end }}
+      {{- with .kind }}
+      kind: {{ . | quote }}
+      {{- end }}
+      {{- with .namespace }}
+      namespace: {{ tpl . $ | quote }}
+      {{- end }}
+      {{- with .sectionName }}
+      sectionName: {{ tpl . $ | quote }}
+      {{- end }}
+      {{- with .port }}
+      {{- if kindIs "string" . }}
+      port: {{ tpl . $ | atoi }}
+      {{- else }}
+      port: {{ . | int }}
+      {{- end }}
+      {{- end }}
+    {{- end }}
+  hostnames:
+    {{- range .Values.httpRoute.hostnames }}
+    - {{ tpl . $ | quote }}
+    {{- end }}
+  rules:
+    {{- range .Values.httpRoute.rules }}
+    - {{- with .matches }}
+      matches:
+        {{- range . }}
+        - {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      {{- with .backendRefs }}
+      backendRefs:
+        {{- range . }}
+        - name: {{ tpl .name $ | quote }}
+          {{- with .group }}
+          group: {{ . | quote }}
+          {{- end }}
+          {{- with .kind }}
+          kind: {{ . | quote }}
+          {{- end }}
+          {{- with .namespace }}
+          namespace: {{ tpl . $ | quote }}
+          {{- end }}
+          {{- with .port }}
+          {{- if kindIs "string" . }}
+          port: {{ tpl . $ | atoi }}
+          {{- else }}
+          port: {{ . | int }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- with .filters }}
+      filters:
+        {{- range . }}
+        - {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+{{- end }}

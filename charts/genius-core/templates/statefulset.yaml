@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "genius-core.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "genius-core.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "genius-core.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "genius-core.selectorLabels" . | nindent 6 }}
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "genius-core.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "genius-core.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ALLOWED_ORIGINS
+              value: {{ .Values.allowedOrigins | quote }}
+            - name: HSTP_PORT
+              value: {{ .Values.service.ports.grpc | quote }}
+            - name: HSTP_ADDR
+              value: "0.0.0.0"
+            - name: WS_ADDR
+              value: "0.0.0.0:8080"
+            - name: MODELS_DIR
+              value: /app/models
+            {{- if .Values.auth.issuerWellKnownUri }}
+            - name: AUTH_OIDC_URI
+              value: {{ .Values.auth.issuerWellKnownUri | quote }}
+            {{- else if .Values.auth.jwksUri }}
+            - name: JWKS_URI
+              value: {{ .Values.auth.jwksUri | quote }}
+            {{- end }}
+            - name: DEFAULT_ADMIN_ID
+              value: {{ .Values.auth.initialAdminUserId | quote }}
+            - name: DEFAULT_ADMIN_PROVIDER
+              value: {{ .Values.auth.defaultProvider | quote }}
+            - name: LICENSE_KEY
+              {{- if .Values.license.keyExistingSecret.name }}
+              value: "/etc/genius/license/{{ .Values.license.keyExistingSecret.key }}"
+              {{- else }}
+              value: /etc/genius/license/licenseKey
+              {{- end }}
+            - name: LICENSE_SERVER_CERTIFICATE
+              {{- if .Values.license.tls.existingSecret.name }}
+              value: "/etc/genius/tls/{{ .Values.license.tls.existingSecret.certKey }}"
+              {{- else }}
+              value: /etc/genius/tls/tls.crt
+              {{- end }}
+            - name: LICENSE_SERVER_PRIVATE_KEY
+              {{- if .Values.license.tls.existingSecret.name }}
+              value: "/etc/genius/tls/{{ .Values.license.tls.existingSecret.keyKey }}"
+              {{- else }}
+              value: /etc/genius/tls/tls.key
+              {{- end }}
+            - name: LICENSE_SERVER_ROOT_CA
+              {{- if .Values.license.tls.existingSecret.name }}
+              value: "/etc/genius/tls/{{ .Values.license.tls.existingSecret.caKey }}"
+              {{- else }}
+              value: /etc/genius/tls/ca.crt
+              {{- end }}
+            - name: RUST_LOG
+              value: {{ .Values.loglevel | quote }}
+            {{- with .Values.extraEnv }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.service.ports.grpc }}
+              protocol: TCP
+            - name: http-ws
+              containerPort: {{ .Values.service.ports.ws }}
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          readinessProbe:
+            tcpSocket:
+              port: grpc
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: "{{ include "genius-core.fullname" . }}-data"
+              mountPath: /app/data
+            - name: license
+              mountPath: /etc/genius/license
+              readOnly: true
+            - name: license-tls
+              mountPath: /etc/genius/tls
+              readOnly: true
+      volumes:
+        - name: license
+          secret:
+            {{- with .Values.license.keyExistingSecret.name }}
+            secretName: {{ . | quote }}
+            {{- else }}
+            secretName: "{{ include "genius-core.fullname" . }}-license-key"
+            {{- end }}
+            defaultMode: 0400
+        - name: license-tls
+          secret:
+            {{- with .Values.license.tls.existingSecret.name }}
+            secretName: {{ . | quote }}
+            {{- else }}
+            secretName: "{{ include "genius-core.fullname" . }}-license-cert"
+            {{- end }}
+            defaultMode: 0400
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: "{{ include "genius-core.fullname" . }}-data"
+      spec:
+        accessModes:
+          {{ toYaml .Values.persistence.accessModes | nindent 10 }}
+        {{- with .Values.persistence.storageClassName }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}

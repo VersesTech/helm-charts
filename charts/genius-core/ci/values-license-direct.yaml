@@ -1,0 +1,15 @@
+license:
+  key: "ASDF-ASDF-ASDF-ASDF"
+  tls:
+    cert: |-
+      -----BEGIN CERTIFICATE-----
+      PLACEHOLDER
+      -----END CERTIFICATE-----
+    key: |-
+      -----BEGIN PRIVATE KEY-----
+      PLACEHOLDER
+      -----END PRIVATE KEY-----
+    ca: |-
+      -----BEGIN CERTIFICATE-----
+      PLACEHOLDER
+      -----END CERTIFICATE-----

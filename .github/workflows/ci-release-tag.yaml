@@ -1,0 +1,30 @@
+name: CI (Release)
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  get-chart:
+    name: Get released chart
+    runs-on: ubuntu-latest
+    outputs:
+      chart: 'charts/${{ steps.regex-match.outputs.group1 }}'
+      chart-version: ${{ steps.regex-match.outputs.group2 }}
+    steps:
+      - uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        with:
+          text: ${{ github.event.release.tag_name }}
+          regex: |-
+            ^(.*?)-(v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)$
+
+  publish-charts:
+    name: Publish Helm charts
+    needs:
+      - get-chart
+    uses: VersesTech/github-actions/.github/workflows/helm-build-push.yaml@main
+    secrets: inherit
+    with:
+      chart: ${{ needs.get-chart.outputs.chart }}
