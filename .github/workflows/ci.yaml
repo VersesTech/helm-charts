@@ -26,6 +26,7 @@ jobs:
     secrets: inherit
     with:
       chart: ${{ matrix.chart }}
+      values-file: ${{ matrix.values-file }}
 
   build:
     name: Build
